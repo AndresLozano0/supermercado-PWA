@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Super tienda Llanera - Carrito</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="css/styles.css" /> 
+
+</head>
+<body class="body-carrito">
+  <div class="header">
+    <img src="/web/assets/img/tulogoaqui.png" class="logo" alt="Logo supermercado" width="40px" /> 
+    <h6 class="mt-2">Super tienda Llanera</h6>
+    <a href="datos-personales.html" class="user-icon"><i class="bi bi-person-circle">&#9661;</i><span class="bi bi-bag-check text-dark"></span></a>    
+  </div>
+    <!-- numero Pedido -->
+  <div class="card numero-pedido m-3">
+    <label for="numero pedido m-3">Pedido # 00479</label>
+  </div>
+    <!--tarjeta principal-->  
+  <div class="card p-3 m-3">
+    <!-- tarjeta Datos del cliente -->
+    <div class="card interior">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <span class="section-title"><strong> Datos del cliente </strong></span>
+        <i class="bi bi-pencil-square"></i>
+      </div>
+      <div>
+        <img src="/web/assets/img/numero uno.png" class="numero" alt="número uno" width="100px">
+        <p class="mb-1"><strong>Nombre:</strong> Francisco Perez Urrutia</p>
+        <p class="mb-1"><strong>Celular:</strong> 9876543211</p>
+        <p class="mb-1"><strong>Correo:</strong> pacheco@outlook.com</p>
+        <p class="mb-0"><strong>Dirección:</strong> Cra #57-7B, Ibagué, Tolima, Colombia</p>
+      </div>
+    </div>  
+     <!-- Cómo recibir -->
+    <div class="card interior">
+      <img src="/web/assets/img/numero dos.png" class="numero" alt="numero dos" width="100px">
+      <span class="section-title mb-2"><strong>Cómo recibir</strong></span>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="recibir" id="retiro" checked>
+        <label class="form-check-label" for="retiro">Retiro en negocio</label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="recibir" id="domicilio">
+        <label class="form-check-label" for="domicilio">Domicilio</label>
+      </div>
+    </div>
+     <!-- Método de pago -->
+    <div class="card interior">
+      <img src="/web/assets/img/numero tres.png" class="numero" alt="numero tres" width="100px">
+      <span class="section-title mb-2"><strong>Método de pago</strong></span>
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="pago" id="pse">
+          <label class="form-check-label" for="pse">PSE</label>
+        </div>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="pago" id="tarjeta">
+        <label class="form-check-label" for="tarjeta">Tarjeta</label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="radio" name="pago" id="efectivo" checked>
+        <label class="form-check-label" for="efectivo">Efectivo</label>
+      </div>
+    </div>
+  </div>  
+    <!-- Resumen del pedido -->
+  <div class="resumen-pedido">
+    <div class="mb-3 d-flex align-items-center">
+      <i class="bi bi-check-circle-fill text-success"></i>
+      <strong class="ms-1">Resumen del pedido</strong>
+      <span class="text-muted ms-2">(3 Artículos en el carrito)</span>
+    </div>
+    <div class="product-row d-flex align-items-center">
+      <img src="/web/assets/img/tomate triple tasty.png" alt="Tomate" class="product-img me-2" width="80">
+      <div class="d-flex-grow-1">
+        <p class="mb-0">Tomate Triple Tasty 500g</p>
+        <div class="input-group cantidad-producto input-group-sm Cantidad-control mb-1">
+          <button class="btn btn-outline-secodary" type="button" onclick="decrementar(this)">-</button>
+          <input type="text" class="form-control text-center" title="cantidad" value="3" readonly>
+          <button class="btn btn-outline-secodary" type="button" onclick="incrementar(this)">+</button>
+        </div>  
+        <small>Precio por unidad: $7.280</small>
+      </div>
+      <i class="bi bi-x ms-auto text-danger" onclick="eliminarProdcto(this)"></i>
+    </div>
+    <div class="product-row d-flex align-items-center">
+      <img src="/web/assets/img/costilla de cerdo.png" alt="Costilla" class="product-img me-2" width="80">
+        <div class="d-flex-grow-1">
+          <p class="mb-0">Costilla de cerdo-Pork Es Saber 1kg</p>
+          <div class="input-group cantidad-producto input-group-sm Cantidad-control mb-1">
+            <button class="btn btn-outline-secodary" type="button" onclick="decrementar(this)">-</button>
+            <input type="text" class="form-control text-center" title="cantidad" value="1" >
+            <button class="btn btn-outline-secodary" type="button" onclick="incrementar(this)">+</button>
+          </div>  
+          <small>Precio por kilo: $25.000</small>
+        </div>
+        <i class="bi bi-x ms-auto text-danger" onclick="eliminarProdcto(this)"></i>
+      </div>
+      <div class="product-row d-flex align-items-center">
+        <img src="/web/assets/img/Leche-Entera-Colanta-maxilitro.png" alt="Leche Leche-Entera-Colanta-maxilitro" class="product-img me-2" width="80">
+        <div class="d-flex-grow-1">
+          <p class="mb-0">Leche Colanta Maxilitro</p>
+          <div class="input-group cantidad-producto input-group-sm Cantidad-control mb-1">
+            <button class="btn btn-outline-secodary" type="button" onclick="decrementar(this)">-</button>
+            <input type="text" class="form-control text-center" title="cantidad" value="2" readonly>
+            <button class="btn btn-outline-secodary" type="button" onclick="incrementar(this)">+</button>
+          </div>  
+          <small>Precio por unidad: $2.900</small>
+        </div>
+        <i class="bi bi-x ms-auto text-danger" onclick="eliminarProdcto(this)"></i>
+      </div>
+      <div class="mt-3">
+        <p class="mb-1"><strong>Subtotal:</strong> $75.040</p>
+        <textarea class="form-control mb-2" rows="2" placeholder="Observaciones"></textarea>
+      </div>
+    </div>
+      <!-- Botones -->
+    <div class="botones-personalizados d-flex justify-content-center mt-4 gap-3">
+      <a href="inicio.html" class="btn-personalizado btn-azul">Agregar más <br> productos</a>
+      <a href="pedido-retirar.html" class="btn-personalizado btn-verde">Procesar <br> Orden</a>
+    </div>
+ <!--funcion de añadir mas de un producto o disminuir de un producto carrito-->
+<script>
+  function incrementar(btn) {
+    let input = btn.parentNode.querySelector('input');
+    input.value = parseInt(input.value) + 1;
+  }
+
+  function decrementar(btn) {
+    let input = btn.parentNode.querySelector('input');
+    let value = parseInt(input.value);
+    if (value > 1) {
+      input.value = value - 1;
+    }
+  }
+</script>
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

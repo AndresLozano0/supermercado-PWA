@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registrarse - Cliente</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css" />
+    <!-- Estilos de Flatpickr -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  
+</head> 
+
+<body class="bg-light">
+
+<div class="container mt-4">
+    <!--encabezado-->
+  <div class="encabezado registro text-center">
+    <h2 class="fw-bold text-primary">Crea una cuenta</h2>
+    <p class="text-muted mt-2">Fácil y rápido.</p>
+  </div>
+    <!--formulario-->
+  <form action="http://localhost:3000/registro" method="post" class="formulario mt-3">
+    <div class="nombre-apellido row mb-3">
+      <div class="col">
+        <input type="text" class="form-control" name="nombres" placeholder="Nombres" required />
+      </div>
+      <div class="col">
+        <input type="text" class="form-control" name="apellidos" placeholder="Apellidos" required />
+      </div> 
+    </div>
+    <!--selector genero-->
+    <div class="mb-3">
+      <label class="form-label d-block">Género:
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="sexo" id="masculino" value="M" required>
+          <label class="form-check-label" for="masculino">Masculino</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="sexo" id="femenino" value="F">
+          <label class="form-check-label" for="femenino">Femenino</label>
+        </div>
+      </label>  
+    </div>
+      <!--selector documento-->
+    <div class="mb-3">
+      <label for="tipoDocumento" class="form-label">Tipo de documento</label>  
+        <select class="form-select" id="tipoDocumento" name="tipo_documento" required>
+        <option value="">Seleccione un tipo</option>
+        <option value="CC">C.C.</option>
+        <option value="TI">T.I.</option>
+        <option value="Pasaporte">PASAPORTE</option>
+        </select>
+    </div>
+      <!--campos input-->
+    <input type="text" class="form-control mb-3" name="numero_documento" placeholder="Documento" required />
+    <input type="text" class="form-control mb-3" id="fechaNacimiento" name="fecha_nacimiento" placeholder="Fecha de nacimiento"/>
+    <input type="tel" class="form-control mb-3" name="celular" placeholder="Celular" required />
+    <input type="email" class="form-control mb-3" name="correo" placeholder="Correo electrónico" required />
+    <input type="text" class="form-control mb-3" name="direccion" placeholder="Dirección" required />
+      <!--contraseña-->
+    <div class="input-group">
+      <input type="password" class="form-control" name="hash_contraseña" id="password" placeholder="Contraseña nueva" required/>
+      <span class="input-group-text">
+        <i class="bi bi-eye" id="togglePassword" onclick="togglePassword('password', 'togglePassword')"></i>
+      </span>
+    </div>
+      <!--boton y enlace-->
+    <div class="boton-registrarte d-grid mb-2">
+      <button type="submit" class="registrarte">Registrarte</button>
+    </div>
+    <p class="text-center">
+      <a href="login.html" class="text-decoration-none">¿Ya tienes una cuenta?</a>
+    </p>
+  </form>
+</div>
+<!-- JS de Flatpickr registro.html -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script>
+  flatpickr("#fechaNacimiento", {
+    dateFormat: "Y-m-d", // formato tipo 2025-04-15
+    allowInput: true
+  });
+</script>
+      <!--ver contraseña-->
+  <script>
+    function togglePassword(inputId, iconId) {
+      const input = document.getElementById(inputId);
+      const icon = document.getElementById(iconId);
+  
+      if (input.type === "password") {
+        input.type = "text"; // Mostrar contraseña
+        icon.classList.remove("bi-eye"); // Quita ojo abierto
+        icon.classList.add("bi-eye-slash"); // Pone ojo cerrado
+      } else {
+        input.type = "password"; // Ocultar contraseña
+        icon.classList.remove("bi-eye-slash"); // Quita ojo cerrado
+        icon.classList.add("bi-eye"); // Pone ojo abierto
+      }
+    }
+  </script>
+</body>
+</html>

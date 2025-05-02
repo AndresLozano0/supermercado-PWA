@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recomendados</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<!--Encabezado-->
+<body>
+  
+  <div class="container py-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <img src="/web/assets/img/tulogoaqui.png" class="logo-supermercado" alt="Logo supermercado"/>
+      <h6 class="nombre-negocio">Super tienda Llanera</h6>
+      <div>        
+        <a href="favoritos.html" class="bi bi-heart fav">.</a>
+        <input type="checkbox" id="modal-toggle" hidden>
+        <label for="modal-toggle">
+        <i class="bi bi-person mx-2"></i>
+        </label>
+        <div class="modal">
+          <div class="modal-content">
+            <label for="modal-toggle" class="boton-cerrar">X</label>
+            <h4>Inicia sesión</h4>
+            <p>Haz tu compra más fácil ahorrando tiempo</p>
+            <p>Ingresa tus datos</p>
+            <form>
+              <input type="text" placeholder="Correo o celular" class="form-control mb-2">
+              <input type="password" placeholder="Contraseña" class="form-control mb-3">
+              <button type="submit" class="btn btn-primary w-100">Entrar</button>
+            </form>
+            <a href="recuperar-contraseña.html" class="text-decoration-none text-center">¿Olvidaste tu contraseña?</a> 
+            <a href="registro.html" class="btn btn-success mt-2 w-100">Crear nueva cuenta</a>
+          </div>
+        </div>  
+        <a href="carrito.html" class="bi bi-cart">.</a>
+      </div>
+    </div>
+
+    <!-- barra de busqueda -->
+    <div class="input-group mb-3">
+      <span class="input-group-text"><i class="bi bi-search mx-2"></i></span>
+      <input type="text" class="form-control" placeholder="¿Qué buscas?">
+      <span class="input-group-text"><i class="bi-mic-fill"></i></span>      
+    </div>
+
+    <div class="card volver-ahorros mb-3" >
+      <a href="inicio.html"class="bi bi-arrow-left-circle volver">.</a>
+      <h6 class="titulo-recuperar-contraseña"><strong> Recomendados para ti</strong></h6>
+    </div>  
+ 
+
+    <div class="contenedor-productos">
+      <div class="tarjeta-producto"> 
+        <img src="/web/assets/img/pasta-de-tomate-galon-4000g-alimentos-delcasino.png" alt="PASTA DE TOMATE">
+        <button class="btn btn-flotante-agregar" title="Agregar al carrito">+</button>
+        <p class="precio">$62.850</p>
+        <p class="nombre-producto">PASTA DE TOMATE<br> DEL CASINO</p>
+        <p class="detalle">Aprox 4200g/pqt<br>$15/g </small>
+        <i class="bi bi-heart favorito"></i>
+      </div>
+      <div class="tarjeta-producto"> 
+        <img src="/web/assets/img/pasta-de-tomate-galon-4000g-alimentos-delcasino.png" alt="PASTA DE TOMATE">
+        <button class="btn btn-flotante-agregar" title="Agregar al carrito">+</button>
+        <p class="precio">$62.850</p>
+        <p class="nombre-producto">PASTA DE TOMATE<br> DEL CASINO</p>
+        <p class="detalle">Aprox 4200g/pqt<br>$15/g </small>
+        <i class="bi bi-heart favorito"></i>
+      </div>
+      <div class="tarjeta-producto"> 
+        <img src="/web/assets/img/pasta-de-tomate-galon-4000g-alimentos-delcasino.png" alt="PASTA DE TOMATE">
+        <button class="btn btn-flotante-agregar" title="Agregar al carrito">+</button>
+        <p class="precio">$62.850</p>
+        <p class="nombre-producto">PASTA DE TOMATE<br> DEL CASINO</p>
+        <p class="detalle">Aprox 4200g/pqt<br>$15/g </small>
+        <i class="bi bi-heart favorito"></i>
+      </div>
+      <div class="tarjeta-producto"> 
+        <img src="/web/assets/img/pasta-de-tomate-galon-4000g-alimentos-delcasino.png" alt="PASTA DE TOMATE">
+        <button class="btn btn-flotante-agregar" title="Agregar al carrito">+</button>
+        <p class="precio">$62.850</p>
+        <p class="nombre-producto">PASTA DE TOMATE<br> DEL CASINO</p>
+        <p class="detalle">Aprox 4200g/pqt<br>$15/g </small>
+        <i class="bi bi-heart favorito"></i>
+      </div>
+      <div class="tarjeta-producto"> 
+        <img src="/web/assets/img/pasta-de-tomate-galon-4000g-alimentos-delcasino.png" alt="PASTA DE TOMATE">
+        <button class="btn btn-flotante-agregar" title="Agregar al carrito">+</button>
+        <p class="precio">$62.850</p>
+        <p class="nombre-producto">PASTA DE TOMATE<br> DEL CASINO</p>
+        <p class="detalle">Aprox 4200g/pqt<br>$15/g </small>
+        <i class="bi bi-heart favorito"></i>
+      </div>
+      <div class="tarjeta-producto"> 
+        <img src="/web/assets/img/pasta-de-tomate-galon-4000g-alimentos-delcasino.png" alt="PASTA DE TOMATE">
+        <button class="btn btn-flotante-agregar" title="Agregar al carrito">+</button>
+        <p class="precio">$62.850</p>
+        <p class="nombre-producto">PASTA DE TOMATE<br> DEL CASINO</p>
+        <p class="detalle">Aprox 4200g/pqt<br>$15/g </small>
+        <i class="bi bi-heart favorito"></i>
+      </div>
+      <div class="tarjeta-producto"> 
+        <img src="/web/assets/img/pasta-de-tomate-galon-4000g-alimentos-delcasino.png" alt="PASTA DE TOMATE">
+        <button class="btn btn-flotante-agregar" title="Agregar al carrito">+</button>
+        <p class="precio">$62.850</p>
+        <p class="nombre-producto">PASTA DE TOMATE<br> DEL CASINO</p>
+        <p class="detalle">Aprox 4200g/pqt<br>$15/g </small>
+        <i class="bi bi-heart favorito"></i>
+      </div>
+      <div class="tarjeta-producto"> 
+        <img src="/web/assets/img/pasta-de-tomate-galon-4000g-alimentos-delcasino.png" alt="PASTA DE TOMATE">
+        <button class="btn btn-flotante-agregar" title="Agregar al carrito">+</button>
+        <p class="precio">$62.850</p>
+        <p class="nombre-producto">PASTA DE TOMATE<br> DEL CASINO</p>
+        <p class="detalle">Aprox 4200g/pqt<br>$15/g </small>
+        <i class="bi bi-heart favorito"></i>
+      </div>
+      <div class="tarjeta-producto"> 
+        <img src="/web/assets/img/pasta-de-tomate-galon-4000g-alimentos-delcasino.png" alt="PASTA DE TOMATE">
+        <button class="btn btn-flotante-agregar" title="Agregar al carrito">+</button>
+        <p class="precio">$62.850</p>
+        <p class="nombre-producto">PASTA DE TOMATE<br> DEL CASINO</p>
+        <p class="detalle">Aprox 4200g/pqt<br>$15/g </small>
+        <i class="bi bi-heart favorito"></i>
+      </div>
+      <div class="tarjeta-producto"> 
+        <img src="/web/assets/img/pasta-de-tomate-galon-4000g-alimentos-delcasino.png" alt="PASTA DE TOMATE">
+        <button class="btn btn-flotante-agregar" title="Agregar al carrito">+</button>
+        <p class="precio">$62.850</p>
+        <p class="nombre-producto">PASTA DE TOMATE<br> DEL CASINO</p>
+        <p class="detalle">Aprox 4200g/pqt<br>$15/g </small>
+        <i class="bi bi-heart favorito"></i>
+      </div>
+    </div> 
+  </body>
+  </html>

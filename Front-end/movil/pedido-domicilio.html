@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Super tienda Llanera</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="body-pedido-retirar">
+  <div class="header">
+    <h4>Domicilio</h4>
+    <a href="datos-personales.html" class="user-icon"><i class="bi bi-person-circle">&#9661;</i></a>   
+  </div>
+    <!--Inf-orden-->
+  <div class="tarjeta-informacion-pedido">
+    <div class="encabezado-pedido">
+      <div class="izquierda">
+        <h6 ><strong> Información del pedido </strong></h6>
+      </div>  
+      <div class="derecha">
+        <p class="bi bi-info-circle" id="info">Orden #00479</p>
+      </div>
+    </div>   
+    <label for="linea mt-3"></label>
+    <div class="datos">
+      <div class="izquierda">
+        <p> <strong>Estado del pedido</strong><br>Enviado</p>
+      </div>
+      <div class="derecha">  
+        <p> <strong>Fecha de orden</strong><br>2025/04/20 - 20:59:09</p>
+      </div>
+    </div>  
+    <p> <strong>Pedido realizado desde la ip</strong><br>190.252.156.511</p>
+    <p> <strong>Método de pago</strong><br>Tarjeta</p>
+  </div>
+  <div class="tarjeta-informacion-pedido">
+    <h6 ><strong> Dirección de envio </strong></h6>
+    <p>Nombre : Francisco Perez Urrutia</p>
+    <p>Dirección : Cra #57-7b. Ibagué, Tolima</p>
+    <label>+<button>Crear nueva dirección</button> </label>
+    <p>Telefono : 9876543211</p>
+    <input type="text" class="form-control mb-3" title="info-extra" placeholder="Información extra; ej: casa verde">
+  </div>     
+  <div class="tarjeta-datos-facturacion">
+    <p> <strong>Datos de facturación</strong></p>
+    <p> <strong>Nombre</strong><br>Francisco Perez Urrutia</p>
+    <p> <strong>Correo electrónico</strong><br>pacheco@outlook.com</p>
+    <p> <strong>Documento</strong><br>C.C. 1234567891</p>
+    <p> <strong>Celular</strong><br>9876543211</p>
+    <p> <strong>Sub total: $75.040 <br>Envio:  $4.200<br>Total: $56.040</strong></p>
+  </div>
+     <!-- botón confirmar (con modal)-->
+  <div class="contenedor-boton-retirar">   
+    <label for="modal-confirm" class="btn-confirmar">Confirmar orden</label>
+  </div>    
+  <input type="checkbox" id="modal-confirm"hidden >
+     <!--Modal-->
+  <div class="modal">
+    <div class="modal-content">
+      <p>Tu pedido se ha realizado con exito.</p>
+      <a href="inicio.html">Aceptar</a>
+    </div>
+  </div>        
+    <!--Enlace cancelar-->
+  <div class="cancelar">
+    <a href="carrito.html">Cancelar</a>
+  </div> 
+</body>
