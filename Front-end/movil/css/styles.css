@@ -127,49 +127,54 @@
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
-  padding-top: 8px;
+  justify-content: flex-start;
 }
 .btn-flotante-agregar{
-  max-width: 40px ;
-  max-height: 40px ;    
-  position:relative;
-  bottom: 120px;
-  left: 120px;
-  background-color: #28a745;
-  border-radius: 50px;   
+    position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 10;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  font-size: 20px;
+  background-color: green;
   color: white;
-  font-size: 30px ;
-  font-weight: bold;
-  font-family: helvetica;
-  border: double white 5px ;  
+  border: none;
+  cursor: pointer;
+  
+  /* Centrado de + con flex */
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: auto;
+  
 }
 .fav {
   color: #000;
 }
 .favorito{
-  position: relative;
-  right: -90px;
-  margin: 4px;
-  font-weight: 20px;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  color: green;
+  font-size: 20px;
+  cursor: pointer;
+  z-index: 10;
 }
 .tarjeta-producto{
-  background-color: #dededeaf;
-  max-width: 50% - 6px;
-  width: 35% - 5px; 
+  background-color  : #dededeaf;
+  width: calc(33% - 10px);
   border: 1px solid #ccc;
   border-radius: 8px;
   padding: 10px;
-  margin-bottom: 5px;
-  margin-right: 8px;
+  margin-bottom: 10px;
+  position: relative;
   box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
 }
 .tarjeta-producto img {
-  margin-bottom: -35px;
-  width: 130px;
+  margin-bottom: 10px;
+  width: 100px;
   height: auto;
   border-radius: 4px;
 } 
