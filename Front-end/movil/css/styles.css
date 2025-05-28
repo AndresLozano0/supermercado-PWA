@@ -194,37 +194,74 @@
 .nombre-negocio {
   font-weight: bolder;    
 }
-.tarjeta-categorias {
-  background-color: #dededeaf;
-  font-size: small;
-  text-align: right;
-  border: solid 1px #ccc; 
-  width: 180px;
-  height: 80px; 
-  align-items: center;
-  justify-content: center;   
-  border-radius: 10px;   
-}
 .contenedor-categorias {
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
+  justify-content: center; /* Centra las tarjetas en la fila */
+  padding: 10px 0;
 }
+
+.tarjeta-categorias {
+  background-color: #dededeaf;
+  font-size: 1rem; /* Un poco más grande para mejor lectura */
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  
+  width: 200px; /* Aumenté el ancho */
+  height: 110px; /* Aumenté la altura */
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 15px;
+
+  box-sizing: border-box;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
 .tarjeta-categorias img {
-  margin-bottom: -35px;
-  width: 60px;
-  height: auto;
+  width: 60px; /* Imagen un poco más grande */
+  height: 60px;
+  object-fit: contain;
   border-radius: 4px;
-  position: relative;
-  right: 110px;
-  top: 10px;
 }
+
 .nom-categoria {
-  position: relative;
-  bottom: 40px;
-  left: 75px;
+  margin: 0;
   text-align: left;
+  line-height: 1.3;
+  font-weight: 600;
+  color: #333;
+  word-wrap: break-word; /* Que el texto pueda quebrarse si es muy largo */
 }
+
+/* Responsividad ajustada */
+@media (max-width: 600px) {
+  .tarjeta-categorias {
+    width: 90%; /* Más ancho en móvil para que el texto quepa */
+    height: auto; /* Que la altura se adapte al contenido */
+    padding: 10px;
+  }
+
+  .tarjeta-categorias img {
+    width: 50px;
+    height: 50px;
+  }
+
+  .nom-categoria {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 400px) {
+  .tarjeta-categorias {
+    width: 100%;
+  }
+}
+
+
 .btn-primary {
   margin-top: 20px;
   width: 100%;
