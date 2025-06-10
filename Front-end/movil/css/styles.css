@@ -261,6 +261,12 @@
   }
 }
 
+@media (max-width: 600px) {
+  .tarjeta-producto {
+    width: calc(50% - 10px); /* 2 columnas */
+  }
+}
+
 
 .btn-primary {
   margin-top: 20px;
@@ -555,4 +561,3 @@ label[for="numero pedido m-3"] {
   border: none;
   left: -10px;
 }
-.bi
