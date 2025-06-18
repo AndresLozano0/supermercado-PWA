@@ -120,6 +120,48 @@
   color: #3f6ef1;
  }
  /*   inicio */
+#productos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+.producto img {
+    width: 100%;
+    display: block;
+    margin: 0 auto 10px;
+    border-radius: 8px;
+    pointer-events: none;
+}
+
+.producto {
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 10px;
+    margin-bottom: 15px;
+    width: 250px;
+    background: gray;
+    position: relative;
+}
+
+.producto h3 {
+    margin: 0 0 5px;
+}
+
+.producto button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.producto button:hover {
+    background-color: #45a049;
+}
+
 .encabezado-catalogo {
  font-weight: bold;
 }
@@ -555,4 +597,3 @@ label[for="numero pedido m-3"] {
   border: none;
   left: -10px;
 }
-.bi
