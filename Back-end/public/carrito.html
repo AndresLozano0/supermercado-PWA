@@ -10,6 +10,89 @@
 
 </head>
 <body class="body-carrito">
+
+  <h1>🛒 Carrito de Compras</h1>
+
+  <table border="1">
+    <thead>
+      <tr>
+        <th>Producto</th>
+        <th>Precio</th>
+        <th>Cantidad</th>
+        <th>Subtotal</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody id="carrito-body">
+      <!-- Se llenará con JS -->
+    </tbody>
+  </table>
+
+  <h2>Total: $<span id="total">0</span></h2>
+  <button onclick="confirmarPedido()">Confirmar Pedido</button>
+
+  <script>
+    let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+
+    function renderCarrito() {
+      const cuerpo = document.getElementById('carrito-body');
+      const totalSpan = document.getElementById('total');
+      cuerpo.innerHTML = '';
+      let total = 0;
+
+      carrito.forEach((item, index) => {
+        const subtotal = item.precio * item.cantidad;
+        total += subtotal;
+
+        const fila = document.createElement('tr');
+        fila.innerHTML = `
+          <td>${item.nombre}</td>
+          <td>$${item.precio}</td>
+          <td>
+            <input type="number" min="1" value="${item.cantidad}" onchange="actualizarCantidad(${index}, this.value)">
+          </td>
+          <td>$${subtotal}</td>
+          <td><button onclick="eliminar(${index})">Eliminar</button></td>
+        `;
+        cuerpo.appendChild(fila);
+      });
+
+      totalSpan.textContent = total;
+    }
+
+    function actualizarCantidad(index, nuevaCantidad) {
+      carrito[index].cantidad = parseInt(nuevaCantidad);
+      localStorage.setItem('carrito', JSON.stringify(carrito));
+      renderCarrito();
+    }
+
+    function eliminar(index) {
+      carrito.splice(index, 1);
+      localStorage.setItem('carrito', JSON.stringify(carrito));
+      renderCarrito();
+    }
+
+    function confirmarPedido() {
+      fetch('/confirmar-pedido', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productos: carrito })
+      })
+      .then(res => res.text())
+      .then(mensaje => {
+        alert(mensaje);
+        localStorage.removeItem('carrito');
+        location.href = '/inicio.html'; // Redirigir al catálogo
+      })
+      .catch(err => {
+        alert('Error al confirmar el pedido');
+        console.error(err);
+      });
+    }
+
+    renderCarrito();
+  </script>
+
   <div class="header">
     <img src="/web/assets/img/tulogoaqui.png" class="logo" alt="Logo supermercado" width="40px" /> 
     <h6 class="mt-2">Super tienda Llanera</h6>

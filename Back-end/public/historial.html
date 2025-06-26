@@ -9,6 +9,52 @@
   <link rel="stylesheet" href="css/styles.css">
 
 </head>
+
+<h2>Mis pedidos</h2>
+<table border="1">
+  <thead>
+    <tr>
+      <th>ID Pedido</th>
+      <th>Producto</th>
+      <th>Precio</th>
+      <th>Cantidad</th>
+      <th>Subtotal</th>
+      <th>Fecha</th>
+    </tr>
+  </thead>
+  <tbody id="tabla-pedidos"></tbody>
+</table>
+
+<script>
+  fetch('/api/mis-pedidos',{
+   credentials: 'include'  
+  })
+    .then(res => {
+      if (!res.ok) throw new Error('Debes iniciar sesión');
+      return res.json();
+    })
+    .then(pedidos => {
+      const tabla = document.getElementById('tabla-pedidos');
+      pedidos.forEach(p => {
+        const fila = document.createElement('tr');
+        fila.innerHTML = `
+          <td>${p.id_pedido}</td>
+          <td>${p.producto}</td>
+          <td>$${p.precio}</td>
+          <td>${p.cantidad}</td>
+          <td>$${(p.precio * p.cantidad).toFixed(2)}</td>
+          <td>${new Date(p.fecha).toLocaleString()}</td>
+        `;
+        tabla.appendChild(fila);
+      });
+    })
+    .catch(err => {
+      alert(err.message || 'Error al cargar historial');
+      console.error(err);
+    });
+</script>
+
+
 <body class="bg-light">
     <!-- barra azul  -->
   <div class="header">

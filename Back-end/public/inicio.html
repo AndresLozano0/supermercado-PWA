@@ -40,7 +40,8 @@
       </div>
     </div>
 
-
+<a href="historial.html">Historial de compras</a>
+<a href="carrito.html">carrito de compras</a>
     
      <!-- barra de busqueda -->
     <div class="input-group mb-3">
@@ -49,34 +50,81 @@
       <span class="input-group-text"><i class="bi-mic-fill"></i></span>      
     </div>
 
+    <h6 class="encabezado-catalogo">Productos destacados</h6>
+
       <!-- Productos destacados -->
 
-        <div id="productos"></div>
+<div id="productos"></div>
 
-  <script>
-    fetch('/api/productos')
-      .then(res => res.json())
-      .then(data => {
-        const contenedor = document.getElementById('productos');
-        let html ='';
+<script>
+  let productos = []; // Arreglo global para acceder a los productos
 
-        data.forEach(producto => {
-          html += `
-            <div class="producto">
-              <img src="${producto.imagen_URL}" alt="${producto.nombre}">
-              <h3>${producto.nombre}</h3>
-              <p>${producto.descripcion}
-              <p>Precio: $${producto.precio_publico}</p>
-              <button onclick="pedir(${producto.id})">Pedir</button>
-            </div>
-          `;
+  // Cargar productos desde el servidor
+  fetch('/api/productos')
+    .then(res => res.json())
+    .then(data => {
+      productos = data; // Guardar para uso posterior
+      const contenedor = document.getElementById('productos');
+      let html = '';
+
+      data.forEach((producto, index) => {
+        html += `
+          <div class="producto">
+            <img src="${producto.imagen_URL}" alt="${producto.nombre}">
+            <h4>$${producto.precio_publico}</h4>
+            <p class="nombre-producto">${producto.nombre}</p>
+            <p class="detalle">${producto.descripcion}</p>  
+            <i class="bi bi-heart favorito"></i>        
+            <button onclick="agregarAlCarrito(${index})">+</button>
+          </div>
+        `;
+      });
+
+      contenedor.innerHTML = html;
+    });
+
+    // 2. Función para agregar producto al carrito
+  function agregarAlCarrito(index) {
+    const producto = productos[index];
+
+  fetch('/usuario')  // Verificar si el usuario está autenticado
+    .then(res => res.json())
+    .then(data => {
+      if (!data.autenticado) {
+        alert('Debes iniciar sesión para agregar productos al carrito');
+        window.location.href = '/login.html';
+        return;
+      }
+
+      // Si está autenticado, continuar normalmente
+      let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+
+      const existente = carrito.find(p => p.id_producto === producto.id_producto);
+      if (existente) {
+        existente.cantidad += 1;
+      } else {
+        carrito.push({
+        id_producto: producto.id_producto,
+        nombre: producto.nombre,
+        precio: producto.precio_publico,
+        cantidad: 1
         });
-        
-      contenedor.innerHTML = html
-      })
-      
-      //Enviar pedido
-            function pedir(id_producto) {
+      }
+
+      localStorage.setItem('carrito', JSON.stringify(carrito));
+      alert(`"${producto.nombre}" agregado al carrito 🛒`);
+    })
+    .catch(err => {
+      alert('Error al verificar sesión:');
+      console.error(err);
+    });
+  }
+
+</script>
+
+
+    //Enviar pedido
+            /*function pedir(id_producto) {
                 fetch('/pedir', {
                     method: 'POST',
                     headers: { 
@@ -91,92 +139,8 @@
                         window.location.href = "/login.html";
                     }
                 });
-            }
+            }*/
         </script>
-  
-    <h6 class="encabezado-catalogo">Productos destacados</h6>
-    <div class="contenedor-productos">
-      <div class="tarjeta-producto"> 
-        <img src="/web/assets/img/pasta-de-tomate-galon-4000g-alimentos-delcasino.png" alt="PASTA DE TOMATE">
-        <button class="btn btn-flotante-agregar" title="Agregar al carrito">+</button>
-        <p class="precio">$62.850</p>
-        <p class="nombre-producto">PASTA DE TOMATE<br> DEL CASINO</p>
-        <p class="detalle">Aprox 4200g/pqt<br>$15/g </small>
-        <i class="bi bi-heart favorito"></i>
-      </div>
-      <div class="tarjeta-producto"> 
-        <img src="/web/assets/img/pasta-de-tomate-galon-4000g-alimentos-delcasino.png" alt="PASTA DE TOMATE">
-        <button class="btn btn-flotante-agregar" title="Agregar al carrito">+</button>
-        <p class="precio">$62.850</p>
-        <p class="nombre-producto">PASTA DE TOMATE<br> DEL CASINO</p>
-        <p class="detalle">Aprox 4200g/pqt<br>$15/g </small>
-        <i class="bi bi-heart favorito"></i>
-      </div>
-      <div class="tarjeta-producto"> 
-        <img src="/web/assets/img/pasta-de-tomate-galon-4000g-alimentos-delcasino.png" alt="PASTA DE TOMATE">
-        <button class="btn btn-flotante-agregar" title="Agregar al carrito">+</button>
-        <p class="precio">$62.850</p>
-        <p class="nombre-producto">PASTA DE TOMATE<br> DEL CASINO</p>
-        <p class="detalle">Aprox 4200g/pqt<br>$15/g </small>
-        <i class="bi bi-heart favorito"></i>
-      </div>
-      <div class="tarjeta-producto"> 
-        <img src="/web/assets/img/pasta-de-tomate-galon-4000g-alimentos-delcasino.png" alt="PASTA DE TOMATE">
-        <button class="btn btn-flotante-agregar" title="Agregar al carrito">+</button>
-        <p class="precio">$62.850</p>
-        <p class="nombre-producto">PASTA DE TOMATE<br> DEL CASINO</p>
-        <p class="detalle">Aprox 4200g/pqt<br>$15/g </small>
-        <i class="bi bi-heart favorito"></i>
-      </div>
-      <div class="tarjeta-producto"> 
-        <img src="/web/assets/img/pasta-de-tomate-galon-4000g-alimentos-delcasino.png" alt="PASTA DE TOMATE">
-        <button class="btn btn-flotante-agregar" title="Agregar al carrito">+</button>
-        <p class="precio">$62.850</p>
-        <p class="nombre-producto">PASTA DE TOMATE<br> DEL CASINO</p>
-        <p class="detalle">Aprox 4200g/pqt<br>$15/g </small>
-        <i class="bi bi-heart favorito"></i>
-      </div>
-      <div class="tarjeta-producto"> 
-        <img src="/web/assets/img/pasta-de-tomate-galon-4000g-alimentos-delcasino.png" alt="PASTA DE TOMATE">
-        <button class="btn btn-flotante-agregar" title="Agregar al carrito">+</button>
-        <p class="precio">$62.850</p>
-        <p class="nombre-producto">PASTA DE TOMATE<br> DEL CASINO</p>
-        <p class="detalle">Aprox 4200g/pqt<br>$15/g </small>
-        <i class="bi bi-heart favorito"></i>
-      </div>
-      <div class="tarjeta-producto"> 
-        <img src="/web/assets/img/pasta-de-tomate-galon-4000g-alimentos-delcasino.png" alt="PASTA DE TOMATE">
-        <button class="btn btn-flotante-agregar" title="Agregar al carrito">+</button>
-        <p class="precio">$62.850</p>
-        <p class="nombre-producto">PASTA DE TOMATE<br> DEL CASINO</p>
-        <p class="detalle">Aprox 4200g/pqt<br>$15/g </small>
-        <i class="bi bi-heart favorito"></i>
-      </div>
-      <div class="tarjeta-producto"> 
-        <img src="/web/assets/img/pasta-de-tomate-galon-4000g-alimentos-delcasino.png" alt="PASTA DE TOMATE">
-        <button class="btn btn-flotante-agregar" title="Agregar al carrito">+</button>
-        <p class="precio">$62.850</p>
-        <p class="nombre-producto">PASTA DE TOMATE<br> DEL CASINO</p>
-        <p class="detalle">Aprox 4200g/pqt<br>$15/g </small>
-        <i class="bi bi-heart favorito"></i>
-      </div>
-      <div class="tarjeta-producto"> 
-        <img src="/web/assets/img/pasta-de-tomate-galon-4000g-alimentos-delcasino.png" alt="PASTA DE TOMATE">
-        <button class="btn btn-flotante-agregar" title="Agregar al carrito">+</button>
-        <p class="precio">$62.850</p>
-        <p class="nombre-producto">PASTA DE TOMATE<br> DEL CASINO</p>
-        <p class="detalle">Aprox 4200g/pqt<br>$15/g </small>
-        <i class="bi bi-heart favorito"></i>
-      </div>
-      <div class="tarjeta-producto"> 
-        <img src="/web/assets/img/pasta-de-tomate-galon-4000g-alimentos-delcasino.png" alt="PASTA DE TOMATE">
-        <button class="btn btn-flotante-agregar" title="Agregar al carrito">+</button>
-        <p class="precio">$62.850</p>
-        <p class="nombre-producto">PASTA DE TOMATE<br> DEL CASINO</p>
-        <p class="detalle">Aprox 4200g/pqt<br>$15/g </small>
-        <i class="bi bi-heart favorito"></i>
-      </div>
-    </div> 
 
       <!-- Categorías -->
 <h6 class="fw-bold mt-4 mb-2">Categorías</h6>

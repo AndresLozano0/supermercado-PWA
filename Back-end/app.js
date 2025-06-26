@@ -124,15 +124,107 @@ app.get('/api/productos', (req, res) => {
 // 🛒 Ruta para hacer un pedido (requiere sesión)
 app.post('/pedir', (req, res) => {
     const usuario = req.session.usuario;
+    const id_producto = req.body.id;
     if (!usuario) {
         return res.send('Debes iniciar sesión para hacer un pedido');
     }
 
-    const id_producto = req.body.id;
-    console.log(`Usuario ${usuario.nombres} quiere pedir el producto ${id_producto}`);
-    res.send('Pedido recibido correctamente (simulado)');
+    const sql = `INSERT INTO pedidos (id_usuario, id_producto) VALUES (?, ?)`;
+    connection.query(sql, [usuario.id_usuario, id_producto], (err, result) => {
+        if (err) {
+            console.error('Error al registrar pedido:', err);
+            return res.status(500).send('Error al hacer el pedido');
+        }
+
+        res.send('Pedido registrado correctamente ✅');
+    });
+});   
+
+// Ruta para consultar pedidos del usuario autenticado
+app.get('/api/mis-pedidos', (req, res) => {
+  const usuario = req.session.usuario;
+  if (!usuario) {
+    return res.status(401).send('No has iniciado sesión');
+  }
+
+  const sql = `
+    SELECT p.id_pedido, pr.nombre AS producto, pr.precio_publico AS precio, d.cantidad, p.fecha
+    FROM pedidos p
+    JOIN pedido_detalle d ON p.id_pedido = d.id_pedido
+    JOIN productos pr ON pr.id_producto = d.id_producto
+    WHERE p.id_usuario = ?
+    ORDER BY p.fecha DESC
+  `;
+
+  connection.query(sql, [usuario.id_usuario], (err, results) => {
+    if (err) {
+      console.error('Error al obtener pedidos:', err);
+      return res.status(500).send('Error al obtener tus pedidos');
+    }
+
+    res.json(results);
+  });
 });
-  
+// ✅ Ruta para verificar si el usuario ha iniciado sesión
+app.get('/usuario', (req, res) => {
+  if (req.session && req.session.usuario) {
+    res.json({ autenticado: true, usuario: req.session.usuario });
+  } else {
+    res.json({ autenticado: false });
+  }
+});
+
+// Ruta para confirmar un pedido (desde el carrito)
+app.post('/confirmar-pedido', (req, res) => {
+  const usuario = req.session.usuario;
+  const productos = req.body.productos;
+
+  if (!usuario) {
+    return res.status(401).send('Debes iniciar sesión para confirmar el pedido');
+  }
+
+  if (!Array.isArray(productos) || productos.length === 0) {
+    return res.status(400).send('No hay productos para confirmar');
+  }
+
+  // Paso 1: Insertar el pedido principal
+  const sqlInsertPedido = `INSERT INTO pedidos (id_usuario, fecha, estado) VALUES (?, NOW(), 'pendiente')`;
+
+  connection.query(sqlInsertPedido, [usuario.id_usuario], (err, resultado) => {
+    if (err) {
+      console.error('❌ Error al insertar en pedidos:', err);
+      return res.status(500).send('Error al confirmar el pedido');
+    }
+
+    const idPedido = resultado.insertId; // ID del pedido generado
+
+    // Paso 2: Insertar detalles del pedido (una fila por producto)
+    const sqlInsertDetalle = `
+      INSERT INTO pedido_detalle (id_pedido, id_producto, cantidad, precio_unitario)
+      VALUES ?
+    `;
+
+    const valores = productos.map(p => [
+      idPedido,
+      p.id_producto,
+      p.cantidad,
+      p.precio
+    ]);
+
+    connection.query(sqlInsertDetalle, [valores], (err2) => {
+      if (err2) {
+        console.error('❌ Error al insertar en pedido_detalle:', err2);
+        return res.status(500).send('Error al registrar productos del pedido');
+      }
+
+      res.send('✅ Pedido confirmado correctamente 🧾');
+    });
+  });
+});
+
+
+
+
     
 
 
