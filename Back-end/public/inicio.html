@@ -40,6 +40,8 @@
       </div>
     </div>
 
+
+    
      <!-- barra de busqueda -->
     <div class="input-group mb-3">
       <span class="input-group-text"><i class="bi bi-search mx-2"></i></span>
@@ -48,6 +50,50 @@
     </div>
 
       <!-- Productos destacados -->
+
+        <div id="productos"></div>
+
+  <script>
+    fetch('/api/productos')
+      .then(res => res.json())
+      .then(data => {
+        const contenedor = document.getElementById('productos');
+        let html ='';
+
+        data.forEach(producto => {
+          html += `
+            <div class="producto">
+              <img src="${producto.imagen_URL}" alt="${producto.nombre}">
+              <h3>${producto.nombre}</h3>
+              <p>${producto.descripcion}
+              <p>Precio: $${producto.precio_publico}</p>
+              <button onclick="pedir(${producto.id})">Pedir</button>
+            </div>
+          `;
+        });
+        
+      contenedor.innerHTML = html
+      })
+      
+      //Enviar pedido
+            function pedir(id_producto) {
+                fetch('/pedir', {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/x-www-form-urlencoded'},
+                    body: 'id=' + encodeURIComponent(id_producto),
+                     credentials: 'include'
+                })    
+                .then(res => res.text())
+                .then(mensaje => {
+                    alert(mensaje);
+                    if (mensaje.includes("iniciar sesión")) {
+                        window.location.href = "/login.html";
+                    }
+                });
+            }
+        </script>
+  
     <h6 class="encabezado-catalogo">Productos destacados</h6>
     <div class="contenedor-productos">
       <div class="tarjeta-producto"> 
