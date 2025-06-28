@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 29-04-2025 a las 19:18:19
+-- Tiempo de generación: 26-06-2025 a las 05:46:43
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -63,6 +63,24 @@ CREATE TABLE `categoria` (
 
 INSERT INTO `categoria` (`id_categoria`, `nombre`, `descripcion`) VALUES
 (1, 'Despensa', 'Productos Arroz, Harina, Maizena y similares');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `datosempresa`
+--
+
+CREATE TABLE `datosempresa` (
+  `nombre` varchar(30) NOT NULL,
+  `logo` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `datosempresa`
+--
+
+INSERT INTO `datosempresa` (`nombre`, `logo`) VALUES
+('Super Tienda Llanera', '/img/tulogoaqui.png');
 
 -- --------------------------------------------------------
 
@@ -147,18 +165,77 @@ INSERT INTO `metodo_de_pago` (`id_pago`, `id_usuario`, `tipo_pago`, `numero_tarj
 
 CREATE TABLE `pedidos` (
   `id_pedido` int(11) NOT NULL,
-  `id_usuario` int(11) NOT NULL,
+  `id_usuario` int(11) DEFAULT NULL,
   `fecha` timestamp NOT NULL DEFAULT current_timestamp(),
-  `total` decimal(10,0) NOT NULL,
-  `estado` enum('Pendiente','Procesando','Enviado','Completado','Cancelado') NOT NULL
+  `estado` varchar(50) DEFAULT 'Pendiente'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `pedidos`
 --
 
-INSERT INTO `pedidos` (`id_pedido`, `id_usuario`, `fecha`, `total`, `estado`) VALUES
-(1, 8, '2025-04-28 05:00:00', 160000, 'Enviado');
+INSERT INTO `pedidos` (`id_pedido`, `id_usuario`, `fecha`, `estado`) VALUES
+(5, NULL, '2025-06-22 19:35:54', 'Pendiente'),
+(6, NULL, '2025-06-22 19:39:37', 'Pendiente'),
+(7, NULL, '2025-06-22 19:40:21', 'Pendiente'),
+(8, 13, '2025-06-22 19:41:28', 'Pendiente'),
+(9, 13, '2025-06-22 19:48:44', 'Pendiente'),
+(10, 13, '2025-06-23 17:19:26', 'Pendiente'),
+(11, 13, '2025-06-23 22:52:20', 'Pendiente'),
+(12, 13, '2025-06-23 22:52:26', 'Pendiente'),
+(13, 13, '2025-06-23 22:57:29', 'Pendiente'),
+(14, 13, '2025-06-23 22:57:34', 'Pendiente'),
+(15, 13, '2025-06-23 23:00:28', 'Pendiente'),
+(16, 13, '2025-06-25 01:13:16', 'Pendiente'),
+(17, 13, '2025-06-25 01:13:17', 'Pendiente'),
+(18, 13, '2025-06-25 01:14:18', 'Pendiente'),
+(19, 13, '2025-06-25 01:14:18', 'Pendiente'),
+(20, 13, '2025-06-25 01:14:18', 'Pendiente'),
+(21, 13, '2025-06-25 01:14:18', 'Pendiente'),
+(22, 13, '2025-06-25 01:14:19', 'Pendiente'),
+(23, 13, '2025-06-25 01:14:19', 'Pendiente'),
+(24, 13, '2025-06-25 01:14:19', 'Pendiente'),
+(25, 13, '2025-06-25 01:14:19', 'Pendiente'),
+(26, 13, '2025-06-25 01:14:19', 'Pendiente'),
+(27, 13, '2025-06-25 17:09:29', 'Pendiente'),
+(28, 13, '2025-06-25 17:09:30', 'Pendiente'),
+(29, 13, '2025-06-25 17:09:30', 'Pendiente'),
+(30, 13, '2025-06-25 17:09:30', 'Pendiente'),
+(31, 13, '2025-06-25 17:09:30', 'Pendiente'),
+(32, 13, '2025-06-25 17:10:26', 'Pendiente'),
+(33, 13, '2025-06-25 17:10:44', 'Pendiente'),
+(34, 13, '2025-06-25 17:10:44', 'Pendiente'),
+(35, 13, '2025-06-25 18:49:39', 'pendiente'),
+(36, 13, '2025-06-25 20:29:20', 'pendiente'),
+(37, 13, '2025-06-25 20:42:25', 'pendiente'),
+(38, 13, '2025-06-25 23:24:38', 'pendiente');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `pedido_detalle`
+--
+
+CREATE TABLE `pedido_detalle` (
+  `id_detalle` int(11) NOT NULL,
+  `id_pedido` int(11) DEFAULT NULL,
+  `id_producto` int(11) DEFAULT NULL,
+  `cantidad` int(11) DEFAULT NULL,
+  `precio_unitario` decimal(10,2) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `pedido_detalle`
+--
+
+INSERT INTO `pedido_detalle` (`id_detalle`, `id_pedido`, `id_producto`, `cantidad`, `precio_unitario`) VALUES
+(1, 35, 1, 2, 2700.00),
+(2, 35, 2, 3, 4700.00),
+(3, 36, 1, 3, 2700.00),
+(4, 36, 2, 2, 4700.00),
+(5, 37, 1, 1, 2700.00),
+(6, 38, 1, 5, 2700.00),
+(7, 38, 2, 3, 4700.00);
 
 -- --------------------------------------------------------
 
@@ -195,7 +272,7 @@ CREATE TABLE `productos` (
   `precio_compra` decimal(10,0) NOT NULL,
   `precio_publico` decimal(10,0) NOT NULL,
   `fecha_registro` timestamp NOT NULL DEFAULT current_timestamp(),
-  `estado` enum('Activo','Inactivo') NOT NULL,
+  `estado` enum('Activo','Inactivo') NOT NULL DEFAULT 'Activo',
   `disponibilidad` enum('Disponible','Bajo stock','Agotado') NOT NULL,
   `imagen_URL` varchar(225) NOT NULL,
   `cantidad` int(11) DEFAULT 0
@@ -206,7 +283,8 @@ CREATE TABLE `productos` (
 --
 
 INSERT INTO `productos` (`id_producto`, `id_proveedor`, `id_categoria`, `nombre`, `descripcion`, `precio_compra`, `precio_publico`, `fecha_registro`, `estado`, `disponibilidad`, `imagen_URL`, `cantidad`) VALUES
-(1, 1, 1, 'Arroz Diana Premium', 'Arroz blanco mejorado 500gr', 1900, 2700, '2025-04-26 05:00:00', 'Activo', 'Disponible', 'https://www.google.com/search?q=arroz+diabla+blaco+premium&sca_esv=0d43da4d4cf24184&udm=2&biw=1536&bih=776&sxsrf=AHTn8zp3OhFEpNMNNt4K234xrh54AdMgHQ%3A1745935881976&ei=Cd4QaKygO9qXwbkPqY7eiQ8&ved=0ahUKEwjsyK6Atv2MAxXaSzABHSmHN', 45);
+(1, 1, 1, 'ARROZ DIANA PREMIUM', 'Aprox 500g/pqt\r\n$5.4/g', 1900, 2700, '2025-04-26 05:00:00', 'Activo', 'Disponible', 'assets/img/arrozblancodianapremiumx500gr.jpg', 45),
+(2, 2, 1, 'FRIJOL DIANA BOLA ROJA', 'Aprox 500g/pqt\r\n$9.4/g', 3500, 4700, '2025-06-18 00:47:04', 'Activo', 'Disponible', 'assets/img/FrijolDIANAbolarojax500gr.jpg', 30);
 
 -- --------------------------------------------------------
 
@@ -284,7 +362,16 @@ CREATE TABLE `usuario` (
 
 INSERT INTO `usuario` (`id_usuario`, `nombres`, `apellidos`, `sexo`, `tipo_documento`, `numero_documento`, `fecha_nacimiento`, `correo`, `celular`, `direccion`, `id_rol`, `hash_contraseña`, `fecha_creación`, `estado`) VALUES
 (8, ' Pedro', ' Gómez', 'M', 'C.C.', '987654321', '1990-01-01', 'pedro@example.com', '3101234567', 'Calle 123 #45-67', 7, 'hashed_password_example', '2025-04-26 05:00:00', 'Activo'),
-(9, ' Antonio', ' Ruiz', 'M', 'C.C.', '987654321', '1990-02-02', 'gomez@example.com', '3109876543', 'Carrera 45 #67-89', 7, 'new_hashed_password', '2025-04-26 05:00:00', 'Activo');
+(9, ' Antonio', ' Ruiz', 'M', 'C.C.', '987654321', '1990-02-02', 'gomez@example.com', '3109876543', 'Carrera 45 #67-89', 7, 'new_hashed_password', '2025-04-26 05:00:00', 'Activo'),
+(10, 'Pepito ', 'Perez', 'M', '', '5555555555', '2011-05-18', 'pepito@perez.com', '5555555555', 'casa de campo casa 5', 7, '555555555555555555555555555555555', '2025-05-25 22:46:10', 'Activo'),
+(11, 'pepe', 'aguilar', 'M', '', '99999999', '2010-06-09', 'ejemplo123@gmail.com', '9999999999', 'hacienda napoles', 7, 'hacienda napoles', '2025-06-07 17:21:44', 'Activo'),
+(12, 'pepe', 'aguilar mojica', 'F', 'PASAPORTE', '8888888', '2025-06-07', 'ejemplo1234@gmail.com', '9999999998', 'ronces valle', 7, 'ronces valle', '2025-06-07 17:51:42', 'Activo'),
+(13, 'pepe jose', 'aguilar mojica', 'M', '', '8888888', '2025-06-16', 'ejemplo12345@gmail.com', '9999999978', 'tolima', 7, 'tolima', '2025-06-07 17:52:33', 'Activo'),
+(14, 'Andrés Felipe', 'Lozano Arias', 'F', 'PASAPORTE', '1193554846', '2025-06-11', 'andresafla42@gmail.com', '3046676598', 'Calle 108 cra 4b', 7, 'Calle 108 cra 4b', '2025-06-07 23:48:15', 'Activo'),
+(15, 'Andrés Felipe', 'Lozano Arias', 'M', '', '2293554846', '2025-06-17', 'andresafla42@gmail.com', '3046676598', 'Calle 108 cra 4b', 7, '123', '2025-06-17 00:42:32', 'Activo'),
+(16, 'maria', 'Lozano Arias', 'F', '', '2293554886', '2000-06-07', 'ejemplo1@exa.com', '1111111', 'Calle 108 cra 4b', 7, '11111111111111111111111', '2025-06-17 02:02:04', 'Activo'),
+(17, 'maria', 'Lozano Arias', 'F', '', '2293554886', '2000-06-07', 'andresafla42@gmail.com', '1111111', 'Calle 108 cra 4b', 7, '1111111', '2025-06-17 02:09:50', 'Activo'),
+(18, 'ultimo', 'ultimo', 'M', 'PASAPORTE', '45687', '2000-06-07', 'ultimo@ultimo.com', '45687', '45687', 7, '45687', '2025-06-17 17:41:31', 'Activo');
 
 --
 -- Índices para tablas volcadas
@@ -338,7 +425,15 @@ ALTER TABLE `metodo_de_pago`
 --
 ALTER TABLE `pedidos`
   ADD PRIMARY KEY (`id_pedido`),
-  ADD KEY `FK_usuario_pedidos_idx` (`id_usuario`);
+  ADD KEY `id_usuario` (`id_usuario`);
+
+--
+-- Indices de la tabla `pedido_detalle`
+--
+ALTER TABLE `pedido_detalle`
+  ADD PRIMARY KEY (`id_detalle`),
+  ADD KEY `id_pedido` (`id_pedido`),
+  ADD KEY `id_producto` (`id_producto`);
 
 --
 -- Indices de la tabla `preferencias`
@@ -418,7 +513,13 @@ ALTER TABLE `metodo_de_pago`
 -- AUTO_INCREMENT de la tabla `pedidos`
 --
 ALTER TABLE `pedidos`
-  MODIFY `id_pedido` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_pedido` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+
+--
+-- AUTO_INCREMENT de la tabla `pedido_detalle`
+--
+ALTER TABLE `pedido_detalle`
+  MODIFY `id_detalle` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `preferencias`
@@ -430,7 +531,7 @@ ALTER TABLE `preferencias`
 -- AUTO_INCREMENT de la tabla `productos`
 --
 ALTER TABLE `productos`
-  MODIFY `id_producto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_producto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `proveedores`
@@ -448,7 +549,7 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- Restricciones para tablas volcadas
@@ -490,7 +591,14 @@ ALTER TABLE `metodo_de_pago`
 -- Filtros para la tabla `pedidos`
 --
 ALTER TABLE `pedidos`
-  ADD CONSTRAINT `FK_usuario_pedidos` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`) ON DELETE CASCADE;
+  ADD CONSTRAINT `pedidos_ibfk_1` FOREIGN KEY (`id_usuario`) REFERENCES `usuario` (`id_usuario`);
+
+--
+-- Filtros para la tabla `pedido_detalle`
+--
+ALTER TABLE `pedido_detalle`
+  ADD CONSTRAINT `pedido_detalle_ibfk_1` FOREIGN KEY (`id_pedido`) REFERENCES `pedidos` (`id_pedido`),
+  ADD CONSTRAINT `pedido_detalle_ibfk_2` FOREIGN KEY (`id_producto`) REFERENCES `productos` (`id_producto`);
 
 --
 -- Filtros para la tabla `preferencias`
