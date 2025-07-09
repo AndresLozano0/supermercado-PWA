@@ -6,16 +6,16 @@ const port = 3000;
 // Importación del archivo de conexión a MySQL
 const connection = require('./conexion');
 
-//importacion de session
+// Importación de session
 const session = require('express-session');
 
-//Configuración de sesión (debe ir antes de las rutas)
-//configuracion express-session debe ir despues de iniciar "express()" y antes de las rutas
+// Configuración de sesión (debe ir antes de las rutas)
 app.use(session({
-    secret: 'secreto-supermercado',
-    resave: false,
-    saveUninitialized: true,
+  secret: 'secreto-supermercado',
+  resave: false,
+  saveUninitialized: true,
 }));
+
 // Middleware para procesar datos de formularios
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -23,23 +23,21 @@ app.use(express.json());
 // Servir archivos HTML y otros estáticos desde una carpeta pública 
 app.use(express.static('public'));
 
-// Ruta de prueba para saber que funciona
+// Ruta de prueba
 app.get('/', (req, res) => {
   res.send('Servidor funcionando correctamente ✅');
 });
 
 // Ruta para registrar usuarios nuevos
 app.post('/registro', (req, res) => {
-  const datos = req.body; // Extraer datos del cuerpo de la solicitud
+  const datos = req.body;
 
-  // Consulta SQL para insertar un nuevo usuario en la tabla "usuario"
   const sql = `
     INSERT INTO usuario 
     (nombres, apellidos, sexo, tipo_documento, numero_documento, fecha_nacimiento, correo, celular, direccion, id_rol, hash_contraseña, fecha_creación, estado)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?)
   `;
 
-  // Arreglo con los valores que se insertarán (en el mismo orden de la consulta SQL)
   const valores = [
     datos.nombres,
     datos.apellidos,
@@ -50,13 +48,12 @@ app.post('/registro', (req, res) => {
     datos.correo,
     datos.celular,
     datos.direccion,
-    datos.id_rol || 7, // // Si no se especifica el rol, se asigna 7 por defecto
+    datos.id_rol || 7,
     datos.hash_contraseña,
-    'Activo' // Estado inicial del usuario
+    'Activo'
   ];
 
-   // Ejecuta la consulta
-  connection.query(sql, valores, (error, results) => {
+  connection.query(sql, valores, (error) => {
     if (error) {
       console.error('Error al registrar usuario:', error);
       res.status(500).send('Error al registrar usuario');
@@ -66,49 +63,51 @@ app.post('/registro', (req, res) => {
   });
 });
 
-//Ruta para iniciar sesión
+// Ruta para iniciar sesión
 app.post('/login', (req, res) => {
-    const { contacto, contraseña } = req.body;// Extrae el correo o celular, y la contraseña
+  const { contacto, contraseña } = req.body;
 
-    // Consulta SQL para buscar al usuario por correo o celular
-const sql = `
-      SELECT * FROM usuario
-      WHERE (correo = ? OR celular = ?) AND estado = 'Activo'
-    `;
-  
-// Ejecuta la consulta con el contacto duplicado (porque puede ser correo o celular)
-    connection.query(sql, [contacto, contacto], (error, results) => {
-      if (error) {
-        console.error('Error en login:', error);
-        return res.status(500).send('Error en el servidor');
-      }
-  
-// Si no se encuentra ningún usuario activo
-      if (results.length === 0) {
-        return res.status(401).send('Usuario no encontrado o inactivo');
-      }
-  
-      const usuario = results[0];
+  const sql = `
+    SELECT * FROM usuario
+    WHERE (correo = ? OR celular = ?) AND estado = 'Activo'
+  `;
 
-            // Verifica si la contraseña coincide (por ahora, sin encriptar)
-      if (contraseña !== usuario.hash_contraseña) {
-        return res.status(401).send('Contraseña incorrecta');
-      }
-      req.session.usuario = usuario;
-    
-      // Si todo está bien:
-      res.send('Inicio de sesión exitoso');
-    });
+  connection.query(sql, [contacto, contacto], (error, results) => {
+    if (error) {
+      console.error('Error en login:', error);
+      return res.status(500).send('Error en el servidor');
+    }
+
+    if (results.length === 0) {
+      return res.status(401).send('Usuario no encontrado o inactivo');
+    }
+
+    const usuario = results[0];
+
+    if (contraseña !== usuario.hash_contraseña) {
+      return res.status(401).send('Contraseña incorrecta');
+    }
+
+    req.session.usuario = usuario;
+    res.send('Inicio de sesión exitoso');
   });
-
-  //Iniciar el servidor y escuchar en el puerto definido
-app.listen(port, () => {
-  console.log(`Servidor iniciado en http://localhost:${port}`);
 });
 
-// 📦 Ruta para mostrar productos desde la base de datos
+// Ruta para cerrar sesión ✅ PASO 4 UBICADO CORRECTAMENTE
+app.post('/logout', (req, res) => {
+  req.session.destroy(err => {
+    if (err) {
+      console.error('Error al cerrar sesión:', err);
+      return res.status(500).send('Error al cerrar sesión');
+    }
+    res.clearCookie('connect.sid');
+    res.send('Sesión cerrada');
+  });
+});
+
+// Ruta para obtener productos
 app.get('/api/productos', (req, res) => {
-  const sql = 'SELECT * FROM productos'; // Asegúrate de que esta tabla exista
+  const sql = 'SELECT * FROM productos';
 
   connection.query(sql, (error, results) => {
     if (error) {
@@ -116,33 +115,35 @@ app.get('/api/productos', (req, res) => {
       return res.status(500).send('Error en el servidor');
     }
 
-    // Devuelve los productos como JSON
     res.json(results);
   });
 });
 
-// 🛒 Ruta para hacer un pedido (requiere sesión)
+// Ruta para hacer pedido
 app.post('/pedir', (req, res) => {
-    const usuario = req.session.usuario;
-    const id_producto = req.body.id;
-    if (!usuario) {
-        return res.send('Debes iniciar sesión para hacer un pedido');
+  const usuario = req.session.usuario;
+  const id_producto = req.body.id;
+
+  if (!usuario) {
+    return res.send('Debes iniciar sesión para hacer un pedido');
+  }
+
+  const sql = `INSERT INTO pedidos (id_usuario, id_producto) VALUES (?, ?)`;
+
+  connection.query(sql, [usuario.id_usuario, id_producto], (err) => {
+    if (err) {
+      console.error('Error al registrar pedido:', err);
+      return res.status(500).send('Error al hacer el pedido');
     }
 
-    const sql = `INSERT INTO pedidos (id_usuario, id_producto) VALUES (?, ?)`;
-    connection.query(sql, [usuario.id_usuario, id_producto], (err, result) => {
-        if (err) {
-            console.error('Error al registrar pedido:', err);
-            return res.status(500).send('Error al hacer el pedido');
-        }
+    res.send('Pedido registrado correctamente ✅');
+  });
+});
 
-        res.send('Pedido registrado correctamente ✅');
-    });
-});   
-
-// Ruta para consultar pedidos del usuario autenticado
+// Ruta para consultar pedidos del usuario
 app.get('/api/mis-pedidos', (req, res) => {
   const usuario = req.session.usuario;
+
   if (!usuario) {
     return res.status(401).send('No has iniciado sesión');
   }
@@ -165,7 +166,8 @@ app.get('/api/mis-pedidos', (req, res) => {
     res.json(results);
   });
 });
-// ✅ Ruta para verificar si el usuario ha iniciado sesión
+
+// Ruta para verificar si hay usuario autenticado
 app.get('/usuario', (req, res) => {
   if (req.session && req.session.usuario) {
     res.json({ autenticado: true, usuario: req.session.usuario });
@@ -174,7 +176,7 @@ app.get('/usuario', (req, res) => {
   }
 });
 
-// Ruta para confirmar un pedido (desde el carrito)
+// Ruta para confirmar pedido (desde carrito)
 app.post('/confirmar-pedido', (req, res) => {
   const usuario = req.session.usuario;
   const productos = req.body.productos;
@@ -187,7 +189,6 @@ app.post('/confirmar-pedido', (req, res) => {
     return res.status(400).send('No hay productos para confirmar');
   }
 
-  // Paso 1: Insertar el pedido principal
   const sqlInsertPedido = `INSERT INTO pedidos (id_usuario, fecha, estado) VALUES (?, NOW(), 'pendiente')`;
 
   connection.query(sqlInsertPedido, [usuario.id_usuario], (err, resultado) => {
@@ -196,9 +197,8 @@ app.post('/confirmar-pedido', (req, res) => {
       return res.status(500).send('Error al confirmar el pedido');
     }
 
-    const idPedido = resultado.insertId; // ID del pedido generado
+    const idPedido = resultado.insertId;
 
-    // Paso 2: Insertar detalles del pedido (una fila por producto)
     const sqlInsertDetalle = `
       INSERT INTO pedido_detalle (id_pedido, id_producto, cantidad, precio_unitario)
       VALUES ?
@@ -222,12 +222,7 @@ app.post('/confirmar-pedido', (req, res) => {
   });
 });
 
-
-
-
-    
-
-
-  
-
-  
+// Iniciar el servidor
+app.listen(port, () => {
+  console.log(`Servidor iniciado en http://localhost:${port}`);
+});

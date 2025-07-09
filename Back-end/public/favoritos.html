@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Super tienda Llanera</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="css/styles.css"/>
+</head>
+
+<body>
+  <div class="container py-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <img src="/assets/img/tulogoaqui.png" class="logo-supermercado" alt="Logo supermercado"/>
+      <h6 class="nombre-negocio">Super tienda Llanera</h6>
+      <div>
+        <a href="favoritos.html" class="bi bi-heart fav">.</a>
+        <input type="checkbox" id="modal-toggle" hidden />
+        <label for="modal-toggle">
+          <i class="bi bi-person mx-2"></i>
+        </label>
+        <div class="modal">
+          <div class="modal-content">
+            <label for="modal-toggle" class="boton-cerrar">X</label>
+            <h4>Inicia sesión</h4>
+            <p>Haz tu compra más fácil ahorrando tiempo</p>
+            <p>Ingresa tus datos</p>
+            <form>
+              <input type="text" placeholder="Correo o celular" class="form-control mb-2" />
+              <input type="password" placeholder="Contraseña" class="form-control mb-3" />
+              <button type="submit" class="btn btn-primary w-100">Entrar</button>
+            </form>
+            <a href="recuperar-contraseña.html" class="text-decoration-none text-center">¿Olvidaste tu contraseña?</a>
+            <a href="registro.html" class="btn btn-success mt-2 w-100">Crear nueva cuenta</a>
+          </div>
+        </div>
+        <a href="carrito.html" class="bi bi-cart">.</a>
+      </div>
+    </div>
+
+    <div class="card volver-ahorros mb-3">
+      <a href="inicio.html" class="bi bi-arrow-left-circle volver">.</a>
+      <h6 class="titulo-recuperar-contraseña"><strong>Favoritos</strong></h6>
+    </div>
+
+    <div class="contenedor-productos" id="lista-favoritos">
+      <!-- Aquí se cargan los favoritos automáticamente -->
+    </div>
+  </div>
+
+  <script>
+    const contenedor = document.getElementById("lista-favoritos");
+    let favoritos = JSON.parse(localStorage.getItem("favoritos")) || [];
+
+    function mostrarFavoritos() {
+      contenedor.innerHTML = "";
+
+      if (favoritos.length === 0) {
+        contenedor.innerHTML = "<p>No tienes productos en favoritos ❤️‍🩹</p>";
+        return;
+      }
+
+      favoritos.forEach((producto, index) => {
+        const div = document.createElement("div");
+        div.classList.add("tarjeta-producto");
+        div.innerHTML = `
+          <img src="${producto.imagen_URL}" alt="${producto.nombre}">
+          <button class="btn btn-flotante-agregar" title="Agregar al carrito" onclick="agregarAlCarrito(${index})">+</button>
+          <p class="precio">$${producto.precio_publico}</p>
+          <p class="nombre-producto">${producto.nombre}</p>
+          <p class="detalle">${producto.descripcion}</p>
+          <i class="bi bi-heart favorito text-danger" title="Eliminar de favoritos" onclick="eliminarDeFavoritos(${index})"></i>
+        `;
+        contenedor.appendChild(div);
+      });
+    }
+
+    function eliminarDeFavoritos(index) {
+      const producto = favoritos[index];
+      if (confirm(`¿Eliminar "${producto.nombre}" de tus favoritos?`)) {
+        favoritos.splice(index, 1);
+        localStorage.setItem("favoritos", JSON.stringify(favoritos));
+        mostrarFavoritos();
+      }
+    }
+
+    function agregarAlCarrito(index) {
+      const producto = favoritos[index];
+
+      fetch('/usuario')
+        .then(res => res.json())
+        .then(data => {
+          if (!data.autenticado) {
+            alert('Debes iniciar sesión para agregar productos al carrito');
+            window.location.href = '/login.html';
+            return;
+          }
+
+          let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+
+          const existente = carrito.find(p => p.id_producto === producto.id_producto);
+          if (existente) {
+            existente.cantidad += 1;
+          } else {
+            carrito.push({
+              id_producto: producto.id_producto,
+              nombre: producto.nombre,
+              precio: producto.precio_publico,
+              cantidad: 1
+            });
+          }
+
+          localStorage.setItem('carrito', JSON.stringify(carrito));
+          alert(`"${producto.nombre}" agregado al carrito 🛒`);
+        })
+        .catch(err => {
+          alert('Error al verificar sesión');
+          console.error(err);
+        });
+    }
+
+    mostrarFavoritos();
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -573,3 +573,31 @@ label[for="numero pedido m-3"] {
   border: none;
   left: -10px;
 }
+.nombre-negocio {
+  font-size: 1rem;
+}
+
+#bienvenida {
+  font-size: 0.85rem;
+  word-break: break-word;
+}
+
+@media (max-width: 576px) {
+  #bienvenida {
+    font-size: 0.8rem;
+    margin-top: 2px;
+  }
+}
+.bi {
+  font-size: 1.3rem;
+  color: black;
+  text-decoration: none;
+}
+
+.bi:hover {
+  color: black;
+}
+
+.bi-box-arrow-right:hover {
+  color: red;
+}
