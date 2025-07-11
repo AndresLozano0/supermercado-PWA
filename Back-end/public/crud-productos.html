@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Gestión de Productos</title>
+</head>
+<body>
+  <h2>📦 Gestión de Productos</h2>
+
+  <form id="form-producto">
+    <input type="text" placeholder="Nombre" id="nombre" required />
+    <input type="text" placeholder="Descripción" id="descripcion" required />
+    <input type="number" placeholder="Precio de compra" id="precio_compra" required />
+    <input type="number" placeholder="Precio público" id="precio_publico" required />
+    <input type="text" placeholder="Imagen URL" id="imagen_URL" required />
+    <input type="number" placeholder="Cantidad" id="cantidad" required />
+    <input type="number" placeholder="ID proveedor" id="id_proveedor" required />
+    <input type="number" placeholder="ID categoría" id="id_categoria" required />
+    <button type="submit">Agregar producto</button>
+  </form>
+
+  <h3>🧾 Lista de productos</h3>
+  <table border="1">
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Compra</th>
+        <th>Venta</th>
+        <th>Cantidad</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody id="tabla-productos"></tbody>
+  </table>
+
+  <script>
+
+         // Validar que el usuario tenga permisos de admin o empleado
+  fetch('/usuario')
+    .then(res => res.json())
+    .then(data => {
+      if (!data.autenticado || data.usuario.id_rol == 6) {
+        alert('Acceso restringido. Solo administradores.');
+        window.location.href = '/login.html';
+      }
+    });
+
+    async function cargarProductos() {
+      const res = await fetch('/api/admin/productos');
+      const productos = await res.json();
+      const cuerpo = document.getElementById('tabla-productos');
+      cuerpo.innerHTML = '';
+
+      productos.forEach(p => {
+        let acciones = '';
+        if (p.estado === 'Activo') {
+          acciones = `<button onclick="desactivar(${p.id_producto})">🛑 Desactivar</button>`;
+        } else {
+          acciones = `<button onclick="reactivar(${p.id_producto})">✅ Reactivar</button>`;
+        }
+
+        cuerpo.innerHTML += `
+          <tr>
+            <td>${p.nombre}</td>
+            <td>$${p.precio_compra}</td>
+            <td>$${p.precio_publico}</td>
+            <td>${p.cantidad}</td>
+            <td>${p.estado}</td>
+            <td>${acciones}</td>
+          </tr>
+        `;
+      });
+    }
+
+    document.getElementById('form-producto').addEventListener('submit', async e => {
+      e.preventDefault();
+      const datos = {
+        nombre: document.getElementById('nombre').value,
+        descripcion: document.getElementById('descripcion').value,
+        precio_compra: parseFloat(document.getElementById('precio_compra').value),
+        precio_publico: parseFloat(document.getElementById('precio_publico').value),
+        imagen_URL: document.getElementById('imagen_URL').value,
+        cantidad: parseInt(document.getElementById('cantidad').value),
+        id_proveedor: parseInt(document.getElementById('id_proveedor').value),
+        id_categoria: parseInt(document.getElementById('id_categoria').value)
+      };
+
+      const res = await fetch('/api/admin/productos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(datos)
+      });
+
+      const mensaje = await res.text();
+      alert(mensaje);
+      cargarProductos();
+      e.target.reset();
+    });
+
+    async function desactivar(id) {
+      if (confirm('¿Desactivar este producto?')) {
+        const res = await fetch(`/api/admin/productos/${id}`, { method: 'DELETE' });
+        const mensaje = await res.text();
+        alert(mensaje);
+        cargarProductos();
+      }
+    }
+
+    async function reactivar(id) {
+      const res = await fetch(`/api/admin/productos/${id}/reactivar`, {
+        method: 'PUT'
+      });
+      const mensaje = await res.text();
+      alert(mensaje);
+      cargarProductos();
+    }
+
+    cargarProductos();
+  </script>
+</body>
+</html>

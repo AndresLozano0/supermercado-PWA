@@ -48,7 +48,7 @@ app.post('/registro', (req, res) => {
     datos.correo,
     datos.celular,
     datos.direccion,
-    datos.id_rol || 7,
+    datos.id_rol || 6,
     datos.hash_contraseña,
     'Activo'
   ];
@@ -58,7 +58,7 @@ app.post('/registro', (req, res) => {
       console.error('Error al registrar usuario:', error);
       res.status(500).send('Error al registrar usuario');
     } else {
-      res.send('Usuario registrado con éxito');
+      res.redirect('/login.html');
     }
   });
 });
@@ -107,7 +107,7 @@ app.post('/logout', (req, res) => {
 
 // Ruta para obtener productos
 app.get('/api/productos', (req, res) => {
-  const sql = 'SELECT * FROM productos';
+  const sql = "SELECT * FROM productos WHERE estado = 'Activo'";
 
   connection.query(sql, (error, results) => {
     if (error) {
@@ -221,6 +221,101 @@ app.post('/confirmar-pedido', (req, res) => {
     });
   });
 });
+
+//Un middleware que verifique el rol del usuario
+
+function esAdminOEmpleado(req, res, next) {
+  const usuario = req.session.usuario;
+
+  if (!usuario || (usuario.id_rol !== 8 && usuario.id_rol !== 7)) {
+    return res.status(403).send('Acceso denegado. Solo administradores u operadores.');
+  }
+
+  next();
+}
+
+// Obtener productos (activos o todos si lo deseas)
+app.get('/api/admin/productos', esAdminOEmpleado, (req, res) => {
+  const sql = 'SELECT * FROM productos'; // o WHERE estado = 'Activo' si quieres solo activos
+  connection.query(sql, (err, resultados) => {
+    if (err) return res.status(500).send('Error al obtener productos');
+    res.json(resultados);
+  });
+});
+
+// Crear producto
+app.post('/api/admin/productos', esAdminOEmpleado, (req, res) => {
+  const {
+    id_proveedor, id_categoria, nombre, descripcion,
+    precio_compra, precio_publico, disponibilidad,
+    imagen_URL, cantidad
+  } = req.body;
+
+  const sql = `
+    INSERT INTO productos 
+    (id_proveedor, id_categoria, nombre, descripcion, precio_compra, precio_publico, disponibilidad, imagen_URL, cantidad)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `;
+
+  connection.query(sql, [
+    id_proveedor, id_categoria, nombre, descripcion,
+    precio_compra, precio_publico, disponibilidad || 'Disponible',
+    imagen_URL, cantidad || 0
+  ], (err) => {
+    if (err) return res.status(500).send('Error al registrar el producto');
+    res.send('✅ Producto creado correctamente');
+  });
+});
+
+// Actualizar producto
+app.put('/api/productos/:id', esAdminOEmpleado, (req, res) => {
+  const id = req.params.id;
+  const {
+    id_proveedor, id_categoria, nombre, descripcion,
+    precio_compra, precio_publico, disponibilidad,
+    imagen_URL, cantidad
+  } = req.body;
+
+  const sql = `
+    UPDATE productos SET 
+      id_proveedor = ?, id_categoria = ?, nombre = ?, descripcion = ?, 
+      precio_compra = ?, precio_publico = ?, disponibilidad = ?, 
+      imagen_URL = ?, cantidad = ?
+    WHERE id_producto = ?
+  `;
+
+  connection.query(sql, [
+    id_proveedor, id_categoria, nombre, descripcion,
+    precio_compra, precio_publico, disponibilidad,
+    imagen_URL, cantidad, id
+  ], (err) => {
+    if (err) return res.status(500).send('Error al actualizar el producto');
+    res.send('✏️ Producto actualizado correctamente');
+  });
+});
+
+// Desactivar producto
+app.delete('/api/admin/productos/:id', esAdminOEmpleado, (req, res) => {
+  const id = req.params.id;
+  const sql = `UPDATE productos SET estado = 'Inactivo' WHERE id_producto = ?`;
+
+  connection.query(sql, [id], (err) => {
+    if (err) return res.status(500).send('Error al desactivar producto');
+    res.send('🗑️ Producto desactivado correctamente');
+  });
+});
+
+// Reactivar producto
+app.put('/api/admin/productos/:id/reactivar', esAdminOEmpleado, (req, res) => {
+  const id = req.params.id;
+  const sql = `UPDATE productos SET estado = 'Activo' WHERE id_producto = ?`;
+
+  connection.query(sql, [id], (err) => {
+    if (err) return res.status(500).send('Error al reactivar producto');
+    res.send('✅ Producto reactivado correctamente');
+  });
+});
+
 
 // Iniciar el servidor
 app.listen(port, () => {
