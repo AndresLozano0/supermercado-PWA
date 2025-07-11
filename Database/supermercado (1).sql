@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 26-06-2025 a las 05:46:43
+-- Tiempo de generación: 11-07-2025 a las 03:26:07
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -208,7 +208,10 @@ INSERT INTO `pedidos` (`id_pedido`, `id_usuario`, `fecha`, `estado`) VALUES
 (35, 13, '2025-06-25 18:49:39', 'pendiente'),
 (36, 13, '2025-06-25 20:29:20', 'pendiente'),
 (37, 13, '2025-06-25 20:42:25', 'pendiente'),
-(38, 13, '2025-06-25 23:24:38', 'pendiente');
+(38, 13, '2025-06-25 23:24:38', 'pendiente'),
+(39, 13, '2025-06-27 04:54:07', 'pendiente'),
+(40, 13, '2025-07-03 15:27:42', 'pendiente'),
+(41, 18, '2025-07-09 20:11:34', 'pendiente');
 
 -- --------------------------------------------------------
 
@@ -235,7 +238,12 @@ INSERT INTO `pedido_detalle` (`id_detalle`, `id_pedido`, `id_producto`, `cantida
 (4, 36, 2, 2, 4700.00),
 (5, 37, 1, 1, 2700.00),
 (6, 38, 1, 5, 2700.00),
-(7, 38, 2, 3, 4700.00);
+(7, 38, 2, 3, 4700.00),
+(8, 39, 1, 1, 2700.00),
+(9, 39, 2, 1, 4700.00),
+(10, 40, 2, 1, 4700.00),
+(11, 41, 1, 1, 2700.00),
+(12, 41, 2, 1, 4700.00);
 
 -- --------------------------------------------------------
 
@@ -273,7 +281,7 @@ CREATE TABLE `productos` (
   `precio_publico` decimal(10,0) NOT NULL,
   `fecha_registro` timestamp NOT NULL DEFAULT current_timestamp(),
   `estado` enum('Activo','Inactivo') NOT NULL DEFAULT 'Activo',
-  `disponibilidad` enum('Disponible','Bajo stock','Agotado') NOT NULL,
+  `disponibilidad` enum('Disponible','Bajo stock','Agotado') NOT NULL DEFAULT 'Disponible',
   `imagen_URL` varchar(225) NOT NULL,
   `cantidad` int(11) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -284,7 +292,8 @@ CREATE TABLE `productos` (
 
 INSERT INTO `productos` (`id_producto`, `id_proveedor`, `id_categoria`, `nombre`, `descripcion`, `precio_compra`, `precio_publico`, `fecha_registro`, `estado`, `disponibilidad`, `imagen_URL`, `cantidad`) VALUES
 (1, 1, 1, 'ARROZ DIANA PREMIUM', 'Aprox 500g/pqt\r\n$5.4/g', 1900, 2700, '2025-04-26 05:00:00', 'Activo', 'Disponible', 'assets/img/arrozblancodianapremiumx500gr.jpg', 45),
-(2, 2, 1, 'FRIJOL DIANA BOLA ROJA', 'Aprox 500g/pqt\r\n$9.4/g', 3500, 4700, '2025-06-18 00:47:04', 'Activo', 'Disponible', 'assets/img/FrijolDIANAbolarojax500gr.jpg', 30);
+(2, 2, 1, 'FRIJOL DIANA BOLA ROJA', 'Aprox 500g/pqt\r\n$9.4/g', 3500, 4700, '2025-06-18 00:47:04', 'Activo', 'Disponible', 'assets/img/FrijolDIANAbolarojax500gr.jpg', 30),
+(3, 1, 1, 'Alverja FRESCAMPO verde 1000gr', 'Alverja verde1000gr', 3800, 6570, '2025-07-11 00:31:17', 'Activo', 'Disponible', 'assets/img/AlverjaFRESCAMPOverde1000gr.jpg', 20);
 
 -- --------------------------------------------------------
 
@@ -361,17 +370,22 @@ CREATE TABLE `usuario` (
 --
 
 INSERT INTO `usuario` (`id_usuario`, `nombres`, `apellidos`, `sexo`, `tipo_documento`, `numero_documento`, `fecha_nacimiento`, `correo`, `celular`, `direccion`, `id_rol`, `hash_contraseña`, `fecha_creación`, `estado`) VALUES
-(8, ' Pedro', ' Gómez', 'M', 'C.C.', '987654321', '1990-01-01', 'pedro@example.com', '3101234567', 'Calle 123 #45-67', 7, 'hashed_password_example', '2025-04-26 05:00:00', 'Activo'),
-(9, ' Antonio', ' Ruiz', 'M', 'C.C.', '987654321', '1990-02-02', 'gomez@example.com', '3109876543', 'Carrera 45 #67-89', 7, 'new_hashed_password', '2025-04-26 05:00:00', 'Activo'),
-(10, 'Pepito ', 'Perez', 'M', '', '5555555555', '2011-05-18', 'pepito@perez.com', '5555555555', 'casa de campo casa 5', 7, '555555555555555555555555555555555', '2025-05-25 22:46:10', 'Activo'),
-(11, 'pepe', 'aguilar', 'M', '', '99999999', '2010-06-09', 'ejemplo123@gmail.com', '9999999999', 'hacienda napoles', 7, 'hacienda napoles', '2025-06-07 17:21:44', 'Activo'),
-(12, 'pepe', 'aguilar mojica', 'F', 'PASAPORTE', '8888888', '2025-06-07', 'ejemplo1234@gmail.com', '9999999998', 'ronces valle', 7, 'ronces valle', '2025-06-07 17:51:42', 'Activo'),
-(13, 'pepe jose', 'aguilar mojica', 'M', '', '8888888', '2025-06-16', 'ejemplo12345@gmail.com', '9999999978', 'tolima', 7, 'tolima', '2025-06-07 17:52:33', 'Activo'),
+(8, ' Pedro', ' Gómez', 'M', 'C.C.', '987654321', '1990-01-01', 'pedro@example.com', '3101234567', 'Calle 123 #45-67', 6, 'hashed_password_example', '2025-04-26 05:00:00', 'Activo'),
+(9, ' Antonio', ' Ruiz', 'M', 'C.C.', '987654321', '1990-02-02', 'gomez@example.com', '3109876543', 'Carrera 45 #67-89', 6, 'new_hashed_password', '2025-04-26 05:00:00', 'Activo'),
+(10, 'Pepito ', 'Perez', 'M', '', '5555555555', '2011-05-18', 'pepito@perez.com', '5555555555', 'casa de campo casa 5', 6, '555555555555555555555555555555555', '2025-05-25 22:46:10', 'Activo'),
+(11, 'pepe', 'aguilar', 'M', '', '99999999', '2010-06-09', 'ejemplo123@gmail.com', '9999999999', 'hacienda napoles', 6, 'hacienda napoles', '2025-06-07 17:21:44', 'Activo'),
+(12, 'pepe', 'aguilar mojica', 'F', 'PASAPORTE', '8888888', '2025-06-07', 'ejemplo1234@gmail.com', '9999999998', 'ronces valle', 6, 'ronces valle', '2025-06-07 17:51:42', 'Activo'),
+(13, 'pepe jose', 'aguilar mojica', 'M', '', '8888888', '2025-06-16', 'ejemplo12345@gmail.com', '9999999978', 'tolima', 8, 'tolima', '2025-06-07 17:52:33', 'Activo'),
 (14, 'Andrés Felipe', 'Lozano Arias', 'F', 'PASAPORTE', '1193554846', '2025-06-11', 'andresafla42@gmail.com', '3046676598', 'Calle 108 cra 4b', 7, 'Calle 108 cra 4b', '2025-06-07 23:48:15', 'Activo'),
-(15, 'Andrés Felipe', 'Lozano Arias', 'M', '', '2293554846', '2025-06-17', 'andresafla42@gmail.com', '3046676598', 'Calle 108 cra 4b', 7, '123', '2025-06-17 00:42:32', 'Activo'),
-(16, 'maria', 'Lozano Arias', 'F', '', '2293554886', '2000-06-07', 'ejemplo1@exa.com', '1111111', 'Calle 108 cra 4b', 7, '11111111111111111111111', '2025-06-17 02:02:04', 'Activo'),
-(17, 'maria', 'Lozano Arias', 'F', '', '2293554886', '2000-06-07', 'andresafla42@gmail.com', '1111111', 'Calle 108 cra 4b', 7, '1111111', '2025-06-17 02:09:50', 'Activo'),
-(18, 'ultimo', 'ultimo', 'M', 'PASAPORTE', '45687', '2000-06-07', 'ultimo@ultimo.com', '45687', '45687', 7, '45687', '2025-06-17 17:41:31', 'Activo');
+(15, 'Andrés Felipe', 'Lozano Arias', 'M', '', '2293554846', '2025-06-17', 'andresafla42@gmail.com', '3046676598', 'Calle 108 cra 4b', 6, '123', '2025-06-17 00:42:32', 'Activo'),
+(16, 'maria', 'Lozano Arias', 'F', '', '2293554886', '2000-06-07', 'ejemplo1@exa.com', '1111111', 'Calle 108 cra 4b', 6, '11111111111111111111111', '2025-06-17 02:02:04', 'Activo'),
+(17, 'maria', 'Lozano Arias', 'F', '', '2293554886', '2000-06-07', 'andresafla42@gmail.com', '1111111', 'Calle 108 cra 4b', 6, '1111111', '2025-06-17 02:09:50', 'Activo'),
+(18, 'ultimo', 'ultimo', 'M', 'PASAPORTE', '45687', '2000-06-07', 'ultimo@ultimo.com', '45687', '45687', 6, '45687', '2025-06-17 17:41:31', 'Activo'),
+(19, 'cliente1', 'clein', 'F', '', '33333333333', '2000-06-07', 'cliente1@example.com', '333333', 'cliente1', 6, 'cliente1', '2025-07-09 20:20:29', 'Activo'),
+(20, 'cliente1', 'clein', 'F', '', '33333333333', '2000-06-07', 'cliente1@example.com', '333333', 'cliente1', 6, 'cliente1', '2025-07-09 20:21:54', 'Activo'),
+(21, 'cliente1', 'clein', 'F', '', '33333333333', '2000-06-07', 'cliente1@example.com', '333333', 'cliente1', 6, 'cliente1', '2025-07-09 20:21:57', 'Activo'),
+(22, 'cliente2', 'klein', 'M', '', '44444444444', '2000-07-29', 'cliente2@example.com', '4444444444', 'cliente2', 6, 'cliente2', '2025-07-09 20:23:31', 'Activo'),
+(23, 'cliente3', 'klaun', 'M', '', '555555555', '1999-07-06', 'cliente3@example.com', '555555555', 'cliente3', 6, 'cliente3', '2025-07-09 20:26:55', 'Activo');
 
 --
 -- Índices para tablas volcadas
@@ -513,13 +527,13 @@ ALTER TABLE `metodo_de_pago`
 -- AUTO_INCREMENT de la tabla `pedidos`
 --
 ALTER TABLE `pedidos`
-  MODIFY `id_pedido` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
+  MODIFY `id_pedido` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
 
 --
 -- AUTO_INCREMENT de la tabla `pedido_detalle`
 --
 ALTER TABLE `pedido_detalle`
-  MODIFY `id_detalle` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id_detalle` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT de la tabla `preferencias`
@@ -531,7 +545,7 @@ ALTER TABLE `preferencias`
 -- AUTO_INCREMENT de la tabla `productos`
 --
 ALTER TABLE `productos`
-  MODIFY `id_producto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_producto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `proveedores`
@@ -549,7 +563,7 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- Restricciones para tablas volcadas
