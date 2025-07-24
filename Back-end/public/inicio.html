@@ -70,8 +70,11 @@
             <h4>$${producto.precio_publico}</h4>
             <p class="nombre-producto">${producto.nombre}</p>
             <p class="detalle">${producto.descripcion}</p>  
+            <p class="stock-producto">cantidad: ${producto.cantidad}</p>
             <i class="bi ${claseCorazon} favorito" onclick="toggleFavorito(${index}, this)"></i>        
-            <button onclick="agregarAlCarrito(${index})">+</button>
+            <button onclick="agregarAlCarrito(${index})" ${producto.cantidad <= 0 ? 'disabled class="btn btn-secondary"' : ''}>
+            ${producto.cantidad <= 0 ? 'Sin stock' : '+'}
+            </button>
           </div>
         `;
       });
