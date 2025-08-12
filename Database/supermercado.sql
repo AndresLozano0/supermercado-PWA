@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 11-07-2025 a las 03:26:07
+-- Tiempo de generación: 12-08-2025 a las 06:41:07
 -- Versión del servidor: 10.4.32-MariaDB
--- Versión de PHP: 8.2.12
+-- Versión de PHP: 8.1.25
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -31,6 +31,7 @@ CREATE TABLE `carrito_compras` (
   `id_carrito` int(11) NOT NULL,
   `id_usuario` int(11) NOT NULL,
   `fecha_creacion_carrito` timestamp NOT NULL DEFAULT current_timestamp(),
+  `direccion` varchar(255) DEFAULT NULL,
   `como_recibir` enum('Domicilio','Recoger en negocio') NOT NULL,
   `fecha_entrega` datetime DEFAULT NULL,
   `observaciones` text DEFAULT NULL,
@@ -41,9 +42,10 @@ CREATE TABLE `carrito_compras` (
 -- Volcado de datos para la tabla `carrito_compras`
 --
 
-INSERT INTO `carrito_compras` (`id_carrito`, `id_usuario`, `fecha_creacion_carrito`, `como_recibir`, `fecha_entrega`, `observaciones`, `estado`) VALUES
-(1, 8, '2025-04-28 05:00:00', 'Domicilio', NULL, 'sino hay coca cola, una sprite está bien', 'Activo'),
-(2, 8, '2025-04-28 05:00:00', 'Recoger en negocio', '2025-04-30 00:00:00', 'Paso al medio dia, gracias :D', 'Activo');
+INSERT INTO `carrito_compras` (`id_carrito`, `id_usuario`, `fecha_creacion_carrito`, `direccion`, `como_recibir`, `fecha_entrega`, `observaciones`, `estado`) VALUES
+(3, 13, '2025-08-03 23:14:58', NULL, '', NULL, NULL, 'Activo'),
+(4, 13, '2025-08-12 04:26:20', 'calle 82b sur # 81-19', 'Domicilio', NULL, NULL, 'Activo'),
+(5, 13, '2025-08-12 04:28:33', 'calle 82b sur # 81-19', 'Domicilio', NULL, NULL, 'Activo');
 
 -- --------------------------------------------------------
 
@@ -62,7 +64,12 @@ CREATE TABLE `categoria` (
 --
 
 INSERT INTO `categoria` (`id_categoria`, `nombre`, `descripcion`) VALUES
-(1, 'Despensa', 'Productos Arroz, Harina, Maizena y similares');
+(1, 'proteinas', 'carnes pollo pescado'),
+(2, 'lacteos refrigerados', 'mercado'),
+(3, 'despensa', 'mercado'),
+(4, 'frutas y verduras', 'mercado'),
+(5, 'cuidado personal', 'belleza'),
+(6, 'aseo', 'aseo');
 
 -- --------------------------------------------------------
 
@@ -80,6 +87,8 @@ CREATE TABLE `datosempresa` (
 --
 
 INSERT INTO `datosempresa` (`nombre`, `logo`) VALUES
+('Super Tienda Llanera', '/img/tulogoaqui.png'),
+('Super Tienda Llanera', '/img/tulogoaqui.png'),
 ('Super Tienda Llanera', '/img/tulogoaqui.png');
 
 -- --------------------------------------------------------
@@ -95,14 +104,6 @@ CREATE TABLE `detalle_carrito` (
   `cantidad` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Volcado de datos para la tabla `detalle_carrito`
---
-
-INSERT INTO `detalle_carrito` (`id_detalle`, `id_carrito`, `id_producto`, `cantidad`) VALUES
-(1, 1, 1, 5),
-(2, 2, 1, 7);
-
 -- --------------------------------------------------------
 
 --
@@ -114,13 +115,6 @@ CREATE TABLE `historial_pedidos` (
   `id_usuario` int(11) NOT NULL,
   `id_detalle` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `historial_pedidos`
---
-
-INSERT INTO `historial_pedidos` (`id_historial`, `id_usuario`, `id_detalle`) VALUES
-(1, 8, 1);
 
 -- --------------------------------------------------------
 
@@ -154,8 +148,26 @@ CREATE TABLE `metodo_de_pago` (
 --
 
 INSERT INTO `metodo_de_pago` (`id_pago`, `id_usuario`, `tipo_pago`, `numero_tarjeta`, `fecha_vencimiento`) VALUES
-(2, 8, 'Tarjeta', 4222222, '2026-11-01'),
-(3, 8, 'PSE', NULL, NULL);
+(4, 13, '', NULL, NULL),
+(5, 13, '', NULL, NULL),
+(6, 13, '', NULL, NULL),
+(7, 13, '', NULL, NULL),
+(8, 13, '', NULL, NULL),
+(9, 13, '', NULL, NULL),
+(10, 13, 'Efectivo', NULL, NULL),
+(11, 13, 'Efectivo', NULL, NULL),
+(12, 13, 'Efectivo', NULL, NULL),
+(13, 13, 'Efectivo', NULL, NULL),
+(14, 13, 'Efectivo', NULL, NULL),
+(15, 13, 'Efectivo', NULL, NULL),
+(16, 13, '', NULL, NULL),
+(17, 13, '', NULL, NULL),
+(18, 13, '', NULL, NULL),
+(19, 13, 'Efectivo', NULL, NULL),
+(20, 13, '', NULL, NULL),
+(21, 13, 'Efectivo', NULL, NULL),
+(22, 13, '', NULL, NULL),
+(23, 13, '', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -167,51 +179,35 @@ CREATE TABLE `pedidos` (
   `id_pedido` int(11) NOT NULL,
   `id_usuario` int(11) DEFAULT NULL,
   `fecha` timestamp NOT NULL DEFAULT current_timestamp(),
-  `estado` varchar(50) DEFAULT 'Pendiente'
+  `estado` varchar(50) DEFAULT 'Pendiente',
+  `id_metodo_pago` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `pedidos`
 --
 
-INSERT INTO `pedidos` (`id_pedido`, `id_usuario`, `fecha`, `estado`) VALUES
-(5, NULL, '2025-06-22 19:35:54', 'Pendiente'),
-(6, NULL, '2025-06-22 19:39:37', 'Pendiente'),
-(7, NULL, '2025-06-22 19:40:21', 'Pendiente'),
-(8, 13, '2025-06-22 19:41:28', 'Pendiente'),
-(9, 13, '2025-06-22 19:48:44', 'Pendiente'),
-(10, 13, '2025-06-23 17:19:26', 'Pendiente'),
-(11, 13, '2025-06-23 22:52:20', 'Pendiente'),
-(12, 13, '2025-06-23 22:52:26', 'Pendiente'),
-(13, 13, '2025-06-23 22:57:29', 'Pendiente'),
-(14, 13, '2025-06-23 22:57:34', 'Pendiente'),
-(15, 13, '2025-06-23 23:00:28', 'Pendiente'),
-(16, 13, '2025-06-25 01:13:16', 'Pendiente'),
-(17, 13, '2025-06-25 01:13:17', 'Pendiente'),
-(18, 13, '2025-06-25 01:14:18', 'Pendiente'),
-(19, 13, '2025-06-25 01:14:18', 'Pendiente'),
-(20, 13, '2025-06-25 01:14:18', 'Pendiente'),
-(21, 13, '2025-06-25 01:14:18', 'Pendiente'),
-(22, 13, '2025-06-25 01:14:19', 'Pendiente'),
-(23, 13, '2025-06-25 01:14:19', 'Pendiente'),
-(24, 13, '2025-06-25 01:14:19', 'Pendiente'),
-(25, 13, '2025-06-25 01:14:19', 'Pendiente'),
-(26, 13, '2025-06-25 01:14:19', 'Pendiente'),
-(27, 13, '2025-06-25 17:09:29', 'Pendiente'),
-(28, 13, '2025-06-25 17:09:30', 'Pendiente'),
-(29, 13, '2025-06-25 17:09:30', 'Pendiente'),
-(30, 13, '2025-06-25 17:09:30', 'Pendiente'),
-(31, 13, '2025-06-25 17:09:30', 'Pendiente'),
-(32, 13, '2025-06-25 17:10:26', 'Pendiente'),
-(33, 13, '2025-06-25 17:10:44', 'Pendiente'),
-(34, 13, '2025-06-25 17:10:44', 'Pendiente'),
-(35, 13, '2025-06-25 18:49:39', 'pendiente'),
-(36, 13, '2025-06-25 20:29:20', 'pendiente'),
-(37, 13, '2025-06-25 20:42:25', 'pendiente'),
-(38, 13, '2025-06-25 23:24:38', 'pendiente'),
-(39, 13, '2025-06-27 04:54:07', 'pendiente'),
-(40, 13, '2025-07-03 15:27:42', 'pendiente'),
-(41, 18, '2025-07-09 20:11:34', 'pendiente');
+INSERT INTO `pedidos` (`id_pedido`, `id_usuario`, `fecha`, `estado`, `id_metodo_pago`) VALUES
+(55, 13, '2025-07-30 03:53:45', 'pendiente', NULL),
+(56, 13, '2025-07-30 03:54:00', 'pendiente', NULL),
+(57, 13, '2025-07-30 03:54:15', 'pendiente', NULL),
+(58, 13, '2025-07-30 03:55:46', 'pendiente', NULL),
+(59, 13, '2025-07-30 04:01:48', 'pendiente', NULL),
+(60, 13, '2025-07-30 04:27:59', 'pendiente', NULL),
+(61, 13, '2025-08-03 06:09:20', 'pendiente', NULL),
+(62, 13, '2025-08-03 06:09:46', 'pendiente', NULL),
+(63, 13, '2025-08-03 06:11:41', 'pendiente', NULL),
+(64, 13, '2025-08-03 06:50:47', 'pendiente', NULL),
+(65, 13, '2025-08-03 06:54:27', 'pendiente', NULL),
+(66, 13, '2025-08-03 06:56:51', 'pendiente', NULL),
+(67, 13, '2025-08-03 17:27:34', 'pendiente', NULL),
+(68, 13, '2025-08-03 17:37:38', 'pendiente', NULL),
+(69, 13, '2025-08-03 17:38:10', 'pendiente', NULL),
+(70, 13, '2025-08-03 23:11:19', 'pendiente', NULL),
+(71, 13, '2025-08-03 23:12:36', 'pendiente', NULL),
+(72, 13, '2025-08-03 23:14:58', 'pendiente', NULL),
+(73, 13, '2025-08-12 04:26:20', 'pendiente', NULL),
+(74, 13, '2025-08-12 04:28:33', 'pendiente', NULL);
 
 -- --------------------------------------------------------
 
@@ -232,18 +228,20 @@ CREATE TABLE `pedido_detalle` (
 --
 
 INSERT INTO `pedido_detalle` (`id_detalle`, `id_pedido`, `id_producto`, `cantidad`, `precio_unitario`) VALUES
-(1, 35, 1, 2, 2700.00),
-(2, 35, 2, 3, 4700.00),
-(3, 36, 1, 3, 2700.00),
-(4, 36, 2, 2, 4700.00),
-(5, 37, 1, 1, 2700.00),
-(6, 38, 1, 5, 2700.00),
-(7, 38, 2, 3, 4700.00),
-(8, 39, 1, 1, 2700.00),
-(9, 39, 2, 1, 4700.00),
-(10, 40, 2, 1, 4700.00),
-(11, 41, 1, 1, 2700.00),
-(12, 41, 2, 1, 4700.00);
+(35, 61, 1, 1, 2700.00),
+(36, 62, 1, 1, 2700.00),
+(37, 63, 1, 1, 2700.00),
+(38, 64, 1, 1, 2700.00),
+(39, 65, 1, 1, 2700.00),
+(40, 66, 1, 1, 2700.00),
+(41, 67, 1, 2, 2700.00),
+(42, 68, 1, 2, 2700.00),
+(43, 69, 1, 2, 2700.00),
+(44, 70, 1, 1, 2700.00),
+(45, 71, 1, 1, 2700.00),
+(46, 72, 1, 2, 2700.00),
+(47, 73, 23, 1, 12000.00),
+(48, 74, 24, 5, 14000.00);
 
 -- --------------------------------------------------------
 
@@ -257,13 +255,6 @@ CREATE TABLE `preferencias` (
   `notificaciones` enum('Sí','No') NOT NULL,
   `medio` enum('SMS','Correo','Whatsapp') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Volcado de datos para la tabla `preferencias`
---
-
-INSERT INTO `preferencias` (`id_preferencia`, `id_usuario`, `notificaciones`, `medio`) VALUES
-(1, 8, 'Sí', 'SMS');
 
 -- --------------------------------------------------------
 
@@ -281,7 +272,7 @@ CREATE TABLE `productos` (
   `precio_publico` decimal(10,0) NOT NULL,
   `fecha_registro` timestamp NOT NULL DEFAULT current_timestamp(),
   `estado` enum('Activo','Inactivo') NOT NULL DEFAULT 'Activo',
-  `disponibilidad` enum('Disponible','Bajo stock','Agotado') NOT NULL DEFAULT 'Disponible',
+  `disponibilidad` enum('Disponible','Bajo stock','Agotado') NOT NULL,
   `imagen_URL` varchar(225) NOT NULL,
   `cantidad` int(11) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -291,9 +282,38 @@ CREATE TABLE `productos` (
 --
 
 INSERT INTO `productos` (`id_producto`, `id_proveedor`, `id_categoria`, `nombre`, `descripcion`, `precio_compra`, `precio_publico`, `fecha_registro`, `estado`, `disponibilidad`, `imagen_URL`, `cantidad`) VALUES
-(1, 1, 1, 'ARROZ DIANA PREMIUM', 'Aprox 500g/pqt\r\n$5.4/g', 1900, 2700, '2025-04-26 05:00:00', 'Activo', 'Disponible', 'assets/img/arrozblancodianapremiumx500gr.jpg', 45),
-(2, 2, 1, 'FRIJOL DIANA BOLA ROJA', 'Aprox 500g/pqt\r\n$9.4/g', 3500, 4700, '2025-06-18 00:47:04', 'Activo', 'Disponible', 'assets/img/FrijolDIANAbolarojax500gr.jpg', 30),
-(3, 1, 1, 'Alverja FRESCAMPO verde 1000gr', 'Alverja verde1000gr', 3800, 6570, '2025-07-11 00:31:17', 'Activo', 'Disponible', 'assets/img/AlverjaFRESCAMPOverde1000gr.jpg', 20);
+(1, 1, 1, 'ARROZ DIANA PREMIUM', 'Aprox 500g/pqt\r\n$5.4/g', 1900, 2700, '2025-04-26 05:00:00', 'Activo', 'Disponible', 'assets/img/arrozblancodianapremiumx500gr.jpg', 30),
+(2, 2, 1, 'FRIJOL DIANA BOLA ROJA', 'Aprox 500g/pqt\r\n$9.4/g', 3500, 4700, '2025-06-18 00:47:04', 'Activo', 'Disponible', 'assets/img/FrijolDIANAbolarojax500gr.jpg', 23),
+(23, 1, 1, 'Pollo Entero', 'Pollo fresco entero', 9000, 12000, '2025-08-08 05:00:00', 'Activo', 'Disponible', 'assets/img/pollo_entero.png', 19),
+(24, 1, 1, 'Carne Molida', 'Carne molida de res', 11000, 14000, '2025-08-08 05:00:00', 'Activo', 'Disponible', 'assets/img/carne_molida.jpeg', 10),
+(25, 1, 1, 'Filete de Pescado', 'Filete fresco de pescado', 10000, 13000, '2025-08-08 05:00:00', 'Activo', 'Disponible', 'assets/img/filete_pescado.jpg', 10),
+(26, 1, 1, 'Pechuga de Pollo', 'Pechuga sin piel', 9500, 12500, '2025-08-08 05:00:00', 'Activo', 'Disponible', 'assets/img/pechuga.jpg', 18),
+(27, 1, 1, 'Costilla de Cerdo', 'Costilla carnuda de cerdo', 10500, 13500, '2025-08-08 05:00:00', 'Activo', 'Disponible', 'assets/img/chuleta_cerdo.jpg', 12),
+(28, 1, 2, 'Leche Entera', 'Leche entera pasteurizada', 2500, 3000, '2025-08-08 05:00:00', 'Activo', 'Disponible', 'assets/img/leche_entera.jpg', 25),
+(29, 1, 2, 'Queso Doble Crema', 'Queso fresco doble crema', 6000, 7500, '2025-08-08 05:00:00', 'Activo', 'Disponible', 'assets/img/queso_campesino.jpeg', 15),
+(30, 1, 2, 'Yogurt Natural', 'Yogurt sin azúcar', 3500, 4500, '2025-08-08 05:00:00', 'Activo', 'Disponible', 'assets/img/yogurt.png', 20),
+(31, 1, 2, 'Mantequilla', 'Mantequilla con sal', 4000, 5000, '2025-08-08 05:00:00', 'Activo', 'Disponible', 'assets/img/mantequilla.jpg', 18),
+(32, 1, 2, 'Crema de Leche', 'Crema de leche espesa', 3700, 4700, '2025-08-08 05:00:00', 'Activo', 'Disponible', 'assets/img/crema_leche.jpg', 12),
+(33, 1, 3, 'Arroz Blanco', 'Arroz blanco tipo 1kg', 2000, 2500, '2025-08-08 05:00:00', 'Activo', 'Disponible', 'assets/img/arroz.jpeg', 30),
+(34, 1, 3, 'Aceite Vegetal', 'Aceite vegetal 1L', 4500, 5500, '2025-08-08 05:00:00', 'Activo', 'Disponible', 'assets/img/aceite.jpg', 20),
+(35, 1, 3, 'Sal Refinada', 'Sal fina para cocina', 1000, 1300, '2025-08-08 05:00:00', 'Activo', 'Disponible', 'assets/img/sal.jpg', 40),
+(36, 1, 3, 'Azúcar Blanca', 'Azúcar refinada 1kg', 2200, 2700, '2025-08-08 05:00:00', 'Activo', 'Disponible', 'assets/img/azucar.jpg', 25),
+(37, 1, 3, 'Fríjoles', 'Fríjol rojo bolita 500g', 3000, 3600, '2025-08-08 05:00:00', 'Activo', 'Disponible', 'assets/img/frijoles.jpg', 22),
+(38, 1, 4, 'Manzana Roja', 'Manzana importada roja', 1500, 2000, '2025-08-08 05:00:00', 'Activo', 'Disponible', 'assets/img/manzanas.jpg', 40),
+(39, 1, 4, 'Plátano Maduro', 'Plátano maduro para freír', 800, 1200, '2025-08-08 05:00:00', 'Activo', 'Disponible', 'assets/img/platano_maduro.jpg', 35),
+(40, 1, 4, 'Tomate Chonto', 'Tomate chonto fresco', 1800, 2300, '2025-08-08 05:00:00', 'Activo', 'Disponible', 'assets/img/tomate.jpg', 30),
+(41, 1, 4, 'Papa Pastusa', 'Papa pastusa lavada', 1200, 1600, '2025-08-08 05:00:00', 'Activo', 'Disponible', 'assets/img/papa.jpg', 50),
+(42, 1, 4, 'Cebolla Cabezona', 'Cebolla cabezona blanca', 1300, 1700, '2025-08-08 05:00:00', 'Activo', 'Disponible', 'assets/img/cebolla.jpg', 28),
+(43, 1, 5, 'Shampoo', 'Shampoo con keratina 400ml', 7000, 8500, '2025-08-08 05:00:00', 'Activo', 'Disponible', 'assets/img/shampoo.png', 20),
+(44, 1, 5, 'Jabón Corporal', 'Jabón en barra neutro', 2000, 2500, '2025-08-08 05:00:00', 'Activo', 'Disponible', 'assets/img/jabon_bano.jpeg', 25),
+(45, 1, 5, 'Crema Dental', 'Crema dental 90g', 2500, 3200, '2025-08-08 05:00:00', 'Activo', 'Disponible', 'assets/img/crema_dental.jpg', 30),
+(46, 1, 5, 'Desodorante', 'Desodorante roll-on', 3000, 3700, '2025-08-08 05:00:00', 'Activo', 'Disponible', 'assets/img/desodorante.png', 18),
+(47, 1, 5, 'Cepillo de Dientes', 'Cepillo dental suave', 1500, 2000, '2025-08-08 05:00:00', 'Activo', 'Disponible', 'assets/img/cepillo_dientes.jpg', 22),
+(48, 1, 6, 'Jabón Líquido', 'Jabón líquido para ropa', 4500, 5200, '2025-08-08 05:00:00', 'Activo', 'Disponible', 'assets/img/jabon_loza.jpg', 20),
+(49, 1, 6, 'Detergente en Polvo', 'Detergente multiusos 1kg', 4000, 4800, '2025-08-08 05:00:00', 'Activo', 'Disponible', 'assets/img/detergente.jpg', 25),
+(50, 1, 6, 'Cloro', 'Cloro desinfectante 1L', 2500, 3000, '2025-08-08 05:00:00', 'Activo', 'Disponible', 'assets/img/cloro.jpeg', 30),
+(51, 1, 6, 'Trapeador', 'Trapeador absorbente', 6000, 7500, '2025-08-08 05:00:00', 'Activo', 'Disponible', 'assets/img/trapeador.jpg', 10),
+(52, 1, 6, 'Escoba', 'Escoba de cerdas duras', 5000, 6200, '2025-08-08 05:00:00', 'Activo', 'Disponible', 'assets/img/escoba.jpg', 12);
 
 -- --------------------------------------------------------
 
@@ -370,22 +390,8 @@ CREATE TABLE `usuario` (
 --
 
 INSERT INTO `usuario` (`id_usuario`, `nombres`, `apellidos`, `sexo`, `tipo_documento`, `numero_documento`, `fecha_nacimiento`, `correo`, `celular`, `direccion`, `id_rol`, `hash_contraseña`, `fecha_creación`, `estado`) VALUES
-(8, ' Pedro', ' Gómez', 'M', 'C.C.', '987654321', '1990-01-01', 'pedro@example.com', '3101234567', 'Calle 123 #45-67', 6, 'hashed_password_example', '2025-04-26 05:00:00', 'Activo'),
-(9, ' Antonio', ' Ruiz', 'M', 'C.C.', '987654321', '1990-02-02', 'gomez@example.com', '3109876543', 'Carrera 45 #67-89', 6, 'new_hashed_password', '2025-04-26 05:00:00', 'Activo'),
-(10, 'Pepito ', 'Perez', 'M', '', '5555555555', '2011-05-18', 'pepito@perez.com', '5555555555', 'casa de campo casa 5', 6, '555555555555555555555555555555555', '2025-05-25 22:46:10', 'Activo'),
-(11, 'pepe', 'aguilar', 'M', '', '99999999', '2010-06-09', 'ejemplo123@gmail.com', '9999999999', 'hacienda napoles', 6, 'hacienda napoles', '2025-06-07 17:21:44', 'Activo'),
-(12, 'pepe', 'aguilar mojica', 'F', 'PASAPORTE', '8888888', '2025-06-07', 'ejemplo1234@gmail.com', '9999999998', 'ronces valle', 6, 'ronces valle', '2025-06-07 17:51:42', 'Activo'),
-(13, 'pepe jose', 'aguilar mojica', 'M', '', '8888888', '2025-06-16', 'ejemplo12345@gmail.com', '9999999978', 'tolima', 8, 'tolima', '2025-06-07 17:52:33', 'Activo'),
-(14, 'Andrés Felipe', 'Lozano Arias', 'F', 'PASAPORTE', '1193554846', '2025-06-11', 'andresafla42@gmail.com', '3046676598', 'Calle 108 cra 4b', 7, 'Calle 108 cra 4b', '2025-06-07 23:48:15', 'Activo'),
-(15, 'Andrés Felipe', 'Lozano Arias', 'M', '', '2293554846', '2025-06-17', 'andresafla42@gmail.com', '3046676598', 'Calle 108 cra 4b', 6, '123', '2025-06-17 00:42:32', 'Activo'),
-(16, 'maria', 'Lozano Arias', 'F', '', '2293554886', '2000-06-07', 'ejemplo1@exa.com', '1111111', 'Calle 108 cra 4b', 6, '11111111111111111111111', '2025-06-17 02:02:04', 'Activo'),
-(17, 'maria', 'Lozano Arias', 'F', '', '2293554886', '2000-06-07', 'andresafla42@gmail.com', '1111111', 'Calle 108 cra 4b', 6, '1111111', '2025-06-17 02:09:50', 'Activo'),
-(18, 'ultimo', 'ultimo', 'M', 'PASAPORTE', '45687', '2000-06-07', 'ultimo@ultimo.com', '45687', '45687', 6, '45687', '2025-06-17 17:41:31', 'Activo'),
-(19, 'cliente1', 'clein', 'F', '', '33333333333', '2000-06-07', 'cliente1@example.com', '333333', 'cliente1', 6, 'cliente1', '2025-07-09 20:20:29', 'Activo'),
-(20, 'cliente1', 'clein', 'F', '', '33333333333', '2000-06-07', 'cliente1@example.com', '333333', 'cliente1', 6, 'cliente1', '2025-07-09 20:21:54', 'Activo'),
-(21, 'cliente1', 'clein', 'F', '', '33333333333', '2000-06-07', 'cliente1@example.com', '333333', 'cliente1', 6, 'cliente1', '2025-07-09 20:21:57', 'Activo'),
-(22, 'cliente2', 'klein', 'M', '', '44444444444', '2000-07-29', 'cliente2@example.com', '4444444444', 'cliente2', 6, 'cliente2', '2025-07-09 20:23:31', 'Activo'),
-(23, 'cliente3', 'klaun', 'M', '', '555555555', '1999-07-06', 'cliente3@example.com', '555555555', 'cliente3', 6, 'cliente3', '2025-07-09 20:26:55', 'Activo');
+(13, 'pepe jose', 'aguilar mojica', 'M', '', '8888888', '2025-06-16', 'ejemplo12345@gmail.com', '9999999978', 'tolima', 7, 'tolima', '2025-06-07 17:52:33', 'Activo'),
+(19, 'andres ', 'rivera', 'M', '', '80895236', '1985-05-05', 'punkss88@hotmail.com', '3192672416', 'calle 82 b sur # 19-31', 6, 'holamama', '2025-07-24 04:38:49', 'Activo');
 
 --
 -- Índices para tablas volcadas
@@ -491,13 +497,13 @@ ALTER TABLE `usuario`
 -- AUTO_INCREMENT de la tabla `carrito_compras`
 --
 ALTER TABLE `carrito_compras`
-  MODIFY `id_carrito` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id_carrito` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `categoria`
 --
 ALTER TABLE `categoria`
-  MODIFY `id_categoria` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_categoria` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `detalle_carrito`
@@ -521,19 +527,19 @@ ALTER TABLE `inventario`
 -- AUTO_INCREMENT de la tabla `metodo_de_pago`
 --
 ALTER TABLE `metodo_de_pago`
-  MODIFY `id_pago` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_pago` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT de la tabla `pedidos`
 --
 ALTER TABLE `pedidos`
-  MODIFY `id_pedido` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
+  MODIFY `id_pedido` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=75;
 
 --
 -- AUTO_INCREMENT de la tabla `pedido_detalle`
 --
 ALTER TABLE `pedido_detalle`
-  MODIFY `id_detalle` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id_detalle` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 
 --
 -- AUTO_INCREMENT de la tabla `preferencias`
@@ -545,7 +551,7 @@ ALTER TABLE `preferencias`
 -- AUTO_INCREMENT de la tabla `productos`
 --
 ALTER TABLE `productos`
-  MODIFY `id_producto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id_producto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
 
 --
 -- AUTO_INCREMENT de la tabla `proveedores`
@@ -563,7 +569,7 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- Restricciones para tablas volcadas
