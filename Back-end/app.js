@@ -228,25 +228,25 @@ app.post('/confirmar-pedido', (req, res) => {
           if (err4) return res.status(500).send('Error al guardar método de pago');
 
           const sqlRecibir = `
-            INSERT INTO carrito_compras (id_usuario, id_pedido, como_recibir, direccion)
-            VALUES (?, ?, ?, ?)
-          `;
-          connection.query(sqlRecibir, [
-            usuario.id_usuario,
-            idPedido,
-            como_recibir,
-            como_recibir === 'domicilio' ? direccion : null
-          ], (err5) => {
-            if (err5) return res.status(500).send('Error al guardar método de entrega');
+  INSERT INTO carrito_compras (id_usuario, como_recibir, direccion)
+  VALUES (?, ?, ?)
+`;
+connection.query(sqlRecibir, [
+  usuario.id_usuario,
+  como_recibir,
+  como_recibir === 'domicilio' ? direccion : null
+], (err5) => {
+  if (err5) return res.status(500).send('Error al guardar método de entrega');
 
-            // Actualizar stock
-            productos.forEach(p => {
-              const sqlActualizarStock = `UPDATE productos SET cantidad = cantidad - ? WHERE id_producto = ?`;
-              connection.query(sqlActualizarStock, [p.cantidad, p.id_producto]);
-            });
+  // Actualizar stock
+  productos.forEach(p => {
+    const sqlActualizarStock = `UPDATE productos SET cantidad = cantidad - ? WHERE id_producto = ?`;
+    connection.query(sqlActualizarStock, [p.cantidad, p.id_producto]);
+  });
 
-            res.send('✅ Pedido confirmado, pago registrado y stock actualizado');
-          });
+  res.send('✅ Pedido confirmado, pago registrado y stock actualizado');
+});
+
         });
       });
     });
