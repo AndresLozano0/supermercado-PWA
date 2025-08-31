@@ -105,19 +105,45 @@ app.post('/logout', (req, res) => {
   });
 });
 
-// Ruta para obtener productos
-app.get('/api/productos', (req, res) => {
-  const sql = "SELECT * FROM productos WHERE estado = 'Activo'";
 
-  connection.query(sql, (error, results) => {
-    if (error) {
-      console.error('Error al obtener los productos:', error);
-      return res.status(500).send('Error en el servidor');
+// Ruta para obtener productos con opción de filtrar por categoría
+// Ruta para obtener productos filtrados por categoría
+app.get("/api/productos", (req, res) => {
+  const { categoria } = req.query;
+
+  let sql = "SELECT * FROM productos";
+  let values = [];
+
+  if (categoria) {
+    sql += " WHERE id_categoria = ?";
+    values.push(categoria);
+  }
+
+  connection.query(sql, values, (err, results) => {
+    if (err) {
+      console.error("Error en la consulta:", err);
+      return res.status(500).json({ error: "Error en el servidor" });
     }
-
     res.json(results);
   });
 });
+
+// Conexión a MySQL
+/*
+const db = mysql.createConnection({
+  host: "localhost",
+  user: "root",     // cambia según tu usuario
+  password: "",     // cambia si tu MySQL tiene contraseña
+  database: "supermercado" // cambia según tu base de datos
+});
+*/
+
+// Servidor
+app.listen(3000, () => {
+  console.log("Servidor corriendo en http://localhost:3000");
+});
+
+
 
 // Ruta para hacer pedido
 app.post('/pedir', (req, res) => {

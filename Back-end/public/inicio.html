@@ -9,230 +9,220 @@
   <link rel="stylesheet" href="css/styles.css">
 </head>
 
-<!--Encabezado-->
 <body>
+  <!-- Encabezado -->
   <div class="container py-3">
     <div class="d-flex justify-content-between align-items-center mb-3">
-  <img src="/assets/img/tulogoaqui.png" class="logo-supermercado" alt="Logo supermercado" />
-  
-  <div class="text-start d-flex flex-column">
-    <h6 class="nombre-negocio m-0">Super tienda Llanera</h6>
-    <span id="bienvenida" class="text-success ms-2 small"></span>
+      <img src="/assets/img/tulogoaqui.png" class="logo-supermercado" alt="Logo supermercado" />
+      
+      <div class="text-start d-flex flex-column">
+        <h1 class="nombre-negocio m-0">Super tienda Llanera</h1>
+        <span id="bienvenida" class="text-success ms-2 small"></span>
+      </div>
+
+      <!-- Bloque de íconos a la derecha -->
+      <div class="d-flex align-items-center gap-2">
+        <a href="favoritos.html" class="bi bi-heart" title="Favoritos"></a>
+        <a href="historial.html" class="bi bi-clock-history" title="Historial de compras"></a>
+        <a href="login.html" class="bi bi-person" title="Iniciar sesión"></a>
+        <a href="carrito.html" class="bi bi-cart" title="Carrito de compras"></a>
+        <a href="#" class="bi bi-box-arrow-right" title="Cerrar sesión" onclick="cerrarSesion()" style="color: red;"></a>
+      </div>
+    </div>
+  </div> <!-- Fin del encabezado -->
+
+  <!-- Productos destacados -->
+  <div class="container">
+    <h2 class="encabezado-catalogo">Productos destacados</h2>
+    <div id="productos"></div>
   </div>
 
-  <!-- Bloque de íconos a la derecha -->
-  <div class="d-flex align-items-center gap-2">
-  <a href="favoritos.html" class="bi bi-heart" title="Favoritos"></a>
-  <a href="historial.html" class="bi bi-clock-history" title="Historial de compras"></a>
-  <a href="login.html" class="bi bi-person" title="Iniciar sesión"></a>
-  <a href="carrito.html" class="bi bi-cart" title="Carrito de compras"></a>
-  <a href="#" class="bi bi-box-arrow-right" title="Cerrar sesión" onclick="cerrarSesion()" style="color: red;"></a>
-</div>
-</div> <!-- Fin del encabezado -->
+  <script>
+    let productos = []; // Arreglo global
 
-
-  
-     <!-- barra de busqueda -->
-    <div class="input-group mb-3">
-      <span class="input-group-text"><i class="bi bi-search mx-2"></i></span>
-      <input type="text" class="form-control" placeholder="¿Qué buscas?">
-      <span class="input-group-text"><i class="bi-mic-fill"></i></span>      
-    </div>
-
-    <h6 class="encabezado-catalogo">Productos destacados</h6>
-
-      <!-- Productos destacados -->
-
-<!-- Productos destacados -->
-<div id="productos"></div>
-
-<script>
-  let productos = []; // Arreglo global
-
-  // Cargar productos desde el servidor
-  fetch('/api/productos')
-    .then(res => res.json())
-    .then(data => {
-      productos = data;
-      const contenedor = document.getElementById('productos');
-      let html = '';
-
-      // Obtener favoritos del localStorage
-      let favoritos = JSON.parse(localStorage.getItem('favoritos')) || [];
-
-      data.forEach((producto, index) => {
-        const enFavoritos = favoritos.some(p => p.id_producto === producto.id_producto);
-        const claseCorazon = enFavoritos ? 'bi-heart-fill text-danger' : 'bi-heart';
-
-        html += `
-          <div class="producto">
-            <img src="${producto.imagen_URL}" alt="${producto.nombre}">
-            <h4>$${producto.precio_publico}</h4>
-            <p class="nombre-producto">${producto.nombre}</p>
-            <p class="detalle">${producto.descripcion}</p>  
-            <p class="stock-producto">cantidad: ${producto.cantidad}</p>
-            <i class="bi ${claseCorazon} favorito" onclick="toggleFavorito(${index}, this)"></i>        
-            <button onclick="agregarAlCarrito(${index})" ${producto.cantidad <= 0 ? 'disabled class="btn btn-secondary"' : ''}>
-            ${producto.cantidad <= 0 ? 'Sin stock' : '+'}
-            </button>
-          </div>
-        `;
-      });
-
-      contenedor.innerHTML = html;
-    });
-
-  // Función para agregar producto al carrito
-  function agregarAlCarrito(index) {
-    const producto = productos[index];
-
-    fetch('/usuario')
+    // Cargar productos desde el servidor
+    fetch('/api/productos')
       .then(res => res.json())
       .then(data => {
-        if (!data.autenticado) {
-          alert('Debes iniciar sesión para agregar productos al carrito');
-          window.location.href = '/login.html';
-          return;
-        }
+        productos = data;
+        const contenedor = document.getElementById('productos');
+        let html = '';
 
-        let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
-
-        const existente = carrito.find(p => p.id_producto === producto.id_producto);
-        if (existente) {
-          existente.cantidad += 1;
-        } else {
-          carrito.push({
-            id_producto: producto.id_producto,
-            nombre: producto.nombre,
-            precio: producto.precio_publico,
-            cantidad: 1
-          });
-        }
-
-        localStorage.setItem('carrito', JSON.stringify(carrito));
-        alert(`"${producto.nombre}" agregado al carrito 🛒`);
-      })
-      .catch(err => {
-        alert('Error al verificar sesión');
-        console.error(err);
-      });
-  }
-
-  // Función para alternar favoritos
-  function toggleFavorito(index, icono) {
-    const producto = productos[index];
-
-    fetch('/usuario')
-      .then(res => res.json())
-      .then(data => {
-        if (!data.autenticado || data.usuario.id_rol !== 7) {
-          alert('Debes iniciar sesión como cliente para usar favoritos');
-          window.location.href = '/login.html';
-          return;
-        }
-
+        // Obtener favoritos del localStorage
         let favoritos = JSON.parse(localStorage.getItem('favoritos')) || [];
-        const existente = favoritos.find(p => p.id_producto === producto.id_producto);
 
-        if (existente) {
-          favoritos = favoritos.filter(p => p.id_producto !== producto.id_producto);
-          icono.classList.remove('bi-heart-fill', 'text-danger');
-          icono.classList.add('bi-heart');
-          alert(`"${producto.nombre}" eliminado de favoritos ❤️‍🩹`);
-        } else {
-          favoritos.push(producto);
-          icono.classList.remove('bi-heart');
-          icono.classList.add('bi-heart-fill', 'text-danger');
-          alert(`"${producto.nombre}" agregado a favoritos ❤️`);
-        }
+        data.forEach((producto, index) => {
+          const enFavoritos = favoritos.some(p => p.id_producto === producto.id_producto);
+          const claseCorazon = enFavoritos ? 'bi-heart-fill text-danger' : 'bi-heart';
 
-        localStorage.setItem('favoritos', JSON.stringify(favoritos));
-      })
-      .catch(err => {
-        alert('Error al verificar sesión');
-        console.error(err);
+          html += `
+            <div class="producto">
+              <img src="${producto.imagen_URL}" alt="${producto.nombre}">
+              <h4>$${producto.precio_publico}</h4>
+              <p class="nombre-producto">${producto.nombre}</p>
+              <p class="detalle">${producto.descripcion}</p>  
+              <p class="stock-producto">Cantidad: ${producto.cantidad}</p>
+              <i class="bi ${claseCorazon} favorito" onclick="toggleFavorito(${index}, this)"></i>        
+              <button onclick="agregarAlCarrito(${index})" ${producto.cantidad <= 0 ? 'disabled class="btn btn-secondary"' : ''}>
+                ${producto.cantidad <= 0 ? 'Sin stock' : '+'}
+              </button>
+            </div>
+          `;
+        });
+
+        contenedor.innerHTML = html;
       });
-  }
-</script>
 
-</script>
+    // Función para agregar producto al carrito
+    function agregarAlCarrito(index) {
+      const producto = productos[index];
 
-      <!-- Categorías -->
-<h6 class="fw-bold mt-4 mb-2">Categorías</h6>
-<div class="contenedor-categorias">
-  <div class="tarjeta-categorias text-center">
-    <img src="/assets/img/carne_pollo.png" class="category-icon mb-1" alt="Categoria">
-    <p class="nom-categoria">Carnes<br> pollo<br>pescado</p>
-  </div>
-  <div class="tarjeta-categorias text-center">
-    <img src="/assets/img/lacteos-huevos.png" class="category-icon mb-1" alt="Categoria">
-    <p class="nom-categoria">Lácteos <br> Huevos<br>Refrigerados</p>
-  </div>
-  <div class="tarjeta-categorias text-center">
-    <img src="/assets/img/despesa.png" class="category-icon mb-1" alt="Categoria">
-    <p class="nom-categoria">Despensa</p>
-  </div>
-  <div class="tarjeta-categorias text-center">
-    <img src="/assets/img/frutas-y-verduras.png" class="category-icon mb-1" alt="Categoria">
-    <p class="nom-categoria">Frutas <br> Verduras</p>
-  </div>
-  <div class="tarjeta-categorias text-center">
-    <img src="/assets/img/cuidado_personal.png" class="category-icon mb-1" alt="Categoria">
-    <p class="nom-categoria">Cuidado personal<br>Belleza</p>
-  </div>
-  <div class="tarjeta-categorias text-center">
-    <img src="/assets/img/Aseo-del-hogar.png" class="category-icon mb-1" alt="Categoria">
-    <p class="nom-categoria">Aseo del hogar</p>
-  </div>
-</div>
+      fetch('/usuario')
+        .then(res => res.json())
+        .then(data => {
+          if (!data.autenticado) {
+            alert('Debes iniciar sesión para agregar productos al carrito');
+            window.location.href = '/login.html';
+            return;
+          }
 
-      <!--boton ver mas categorias-->
-    <div class="text-center mt-3">
-      <a href="categorias.html" class="btn btn-outline-primary btn-sm">Ver todas las categorías</a>
+          let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+
+          const existente = carrito.find(p => p.id_producto === producto.id_producto);
+          if (existente) {
+            existente.cantidad += 1;
+          } else {
+            carrito.push({
+              id_producto: producto.id_producto,
+              nombre: producto.nombre,
+              precio: producto.precio_publico,
+              cantidad: 1
+            });
+          }
+
+          localStorage.setItem('carrito', JSON.stringify(carrito));
+          alert(`"${producto.nombre}" agregado al carrito 🛒`);
+        })
+        .catch(err => {
+          alert('Error al verificar sesión');
+          console.error(err);
+        });
+    }
+
+    // Función para alternar favoritos
+    function toggleFavorito(index, icono) {
+      const producto = productos[index];
+
+      fetch('/usuario')
+        .then(res => res.json())
+        .then(data => {
+          if (!data.autenticado || data.usuario.id_rol !== 7) {
+            alert('Debes iniciar sesión como cliente para usar favoritos');
+            window.location.href = '/login.html';
+            return;
+          }
+
+          let favoritos = JSON.parse(localStorage.getItem('favoritos')) || [];
+          const existente = favoritos.find(p => p.id_producto === producto.id_producto);
+
+          if (existente) {
+            favoritos = favoritos.filter(p => p.id_producto !== producto.id_producto);
+            icono.classList.remove('bi-heart-fill', 'text-danger');
+            icono.classList.add('bi-heart');
+            alert(`"${producto.nombre}" eliminado de favoritos ❤️‍🩹`);
+          } else {
+            favoritos.push(producto);
+            icono.classList.remove('bi-heart');
+            icono.classList.add('bi-heart-fill', 'text-danger');
+            alert(`"${producto.nombre}" agregado a favoritos ❤️`);
+          }
+
+          localStorage.setItem('favoritos', JSON.stringify(favoritos));
+        })
+        .catch(err => {
+          alert('Error al verificar sesión');
+          console.error(err);
+        });
+    }
+  </script>
+
+  <!-- Categorías -->
+  <div class="container mt-4">
+    <h2 class="fw-bold mb-2">Categorías</h2>
+
+    <div class="contenedor-categorias">
+      <div class="tarjeta-categorias text-center" onclick="irCategoria(1)">
+        <img src="/assets/img/carne_pollo.png" class="category-icon mb-1" alt="Proteínas">
+        <p class="nom-categoria">Carnes<br>Pollo<br>Pescado</p>
+      </div>
+
+      <div class="tarjeta-categorias text-center" onclick="irCategoria(2)">
+        <img src="/assets/img/lacteos-huevos.png" class="category-icon mb-1" alt="Lácteos">
+        <p class="nom-categoria">Lácteos<br>Huevos<br>Refrigerados</p>
+      </div>
+
+      <div class="tarjeta-categorias text-center" onclick="irCategoria(3)">
+        <img src="/assets/img/despesa.png" class="category-icon mb-1" alt="Despensa">
+        <p class="nom-categoria">Despensa</p>
+      </div>
+
+      <div class="tarjeta-categorias text-center" onclick="irCategoria(4)">
+        <img src="/assets/img/frutas-y-verduras.png" class="category-icon mb-1" alt="Frutas y verduras">
+        <p class="nom-categoria">Frutas<br>Verduras</p>
+      </div>
+
+      <div class="tarjeta-categorias text-center" onclick="irCategoria(5)">
+        <img src="/assets/img/cuidado_personal.png" class="category-icon mb-1" alt="Cuidado personal">
+        <p class="nom-categoria">Cuidado personal<br>Belleza</p>
+      </div>
+
+      <div class="tarjeta-categorias text-center" onclick="irCategoria(6)">
+        <img src="/assets/img/Aseo-del-hogar.png" class="category-icon mb-1" alt="Aseo">
+        <p class="nom-categoria">Aseo del hogar</p>
+      </div>
     </div>
-      <!-- Sección inferior de botones -->
-    <div class="floating-btns mt-3 ">
-      <a href="recomendados.html" class="btn btn-primary">+ Recomendados para ti</a>
-      <a href="ahorros.html" class="btn btn-primary">Ahorros exclusivos +</a>
-      <a href="imperdibles.html" class="btn btn-primary">+ Productos imperdibles</a>
-      <a href="hogar.html" class="btn btn-primary"> Lo mejor para el hogar +</a>
-    </div>
   </div>
+
+  <!-- Redirección corregida -->
+  <script>
+    function irCategoria(id) {
+      // ✅ Ahora usa "categoria" para ser consistente con productos.html
+      window.location.href = `productos.html?categoria=${id}`;
+    }
+  </script>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-  // Verificar si el usuario está autenticado y mostrar su nombre
-  fetch('/usuario')
-    .then(res => res.json())
-    .then(data => {
-      if (data.autenticado && data.usuario.nombres) {
-        const bienvenida = document.getElementById('bienvenida');
-        bienvenida.textContent = `Bienvenido, ${data.usuario.nombres}`;
-      }
-    })
-    .catch(err => {
-      console.error('Error al obtener el usuario:', err);
-    });
-</script>
 
-<script>
-  fetch('/usuario')
-    .then(res => res.json())
-    .then(data => {
-      if (data.autenticado) {
-        document.getElementById('bienvenida').textContent = 'Bienvenido, ' + data.usuario.nombres.toLowerCase();
-      }
-    });
-
-  function cerrarSesion() {
-    fetch('/logout', { method: 'POST' })
-      .then(() => {
-        window.location.href = '/inicio.html';
+  <script>
+    // Verificar si el usuario está autenticado y mostrar su nombre
+    fetch('/usuario')
+      .then(res => res.json())
+      .then(data => {
+        if (data.autenticado && data.usuario.nombres) {
+          const bienvenida = document.getElementById('bienvenida');
+          bienvenida.textContent = `Bienvenido, ${data.usuario.nombres}`;
+        }
       })
+
+
+
+
+
+      
       .catch(err => {
-        alert('Error al cerrar sesión');
-        console.error(err);
+        console.error('Error al obtener el usuario:', err);
       });
-  }
-</script>
+
+    function cerrarSesion() {
+      fetch('/logout', { method: 'POST' })
+        .then(() => {
+          window.location.href = '/inicio.html';
+        })
+        .catch(err => {
+          alert('Error al cerrar sesión');
+          console.error(err);
+        });
+    }
+  </script>
 </body>
 </html>
